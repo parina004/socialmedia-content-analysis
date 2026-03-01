@@ -1,2 +1,19 @@
 .DS_Store
 .env
+
+# uv Python environment variables
+.venv/
+__pycache__/
+*.pyc
+*.pyo
+
+.gitkeep
+
+# Dataset files too large for GitHub, so will skip
+data/*.csv
+data/*.json
+data/.collection_checkpoint.json
+data/videos/
+data/viral/
+data/not_viral/
+data/.tmp_clips/
