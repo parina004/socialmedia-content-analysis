@@ -1,0 +1,31 @@
+[project]
+name = "socialmedia-content-analysis"
+version = "0.1.0"
+description = "Adaptive AI Framework for Social Media Virality Prediction and Synthetic Media Detection"
+requires-python = ">=3.10"
+dependencies = [
+    ##Core ML
+    "torch==2.1.0",
+    "torchvision==0.16.0",
+    "torchaudio==2.1.0",
+    ## YouTube dataset collection
+    "google-api-python-client==2.118.0",
+    "python-dotenv==1.0.1",
+    ## Feature extraction — visual
+    "opencv-python==4.9.0.80",
+    "mediapipe==0.10.9",
+    "deepface==0.0.93",
+    "tf-keras",
+    "piq==0.8.0",
+    ## Feature extraction — audio
+    "librosa==0.10.1",
+    "soundfile==0.12.1",
+    ## Feature extraction — metadata
+    "textblob==0.18.0",
+    # Video download
+    "yt-dlp>=2024.1.0",
+    ## Numerical
+    "numpy>=1.24.0,<2.0",
+    "scipy>=1.12.0",
+    "setuptools",
+]
