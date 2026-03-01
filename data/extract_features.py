@@ -3,12 +3,15 @@
 ##   2. Extracts 20 features and logs every single one to the terminal
 ##   3. Writes the row to features.csv immediately (safe against crashes)
 ##   4. Deletes the clip right away — peak disk usage stays under ~500 MB
-##
+
 ## Every video is wrapped in its own try/except so one bad video never
-## kills the whole run. BATCH_SIZE controls how many videos to process
-## before stopping cleanly — re-run to continue from the checkpoint.
-## Set BATCH_SIZE to 0 to run everything in one go (not recommended).
-##
+## kills the whole run. BATCH_SIZE controls how many videos per loop.
+## After each batch it automatically starts the next one — no need to
+## re-run manually. It stops only when all videos are done.
+
+## yt-dlp uses browser cookies so YouTube doesn't block it as a bot.
+## Make sure BROWSER below matches the browser you're logged into YouTube with.
+
 ## Run with:  uv run python data/extract_features.py
 
 import csv
@@ -50,11 +53,14 @@ CLIP_SECONDS      = 60
 FRAME_STEP_S      = 1      ## sample 1 frame per second
 EMOTION_STEP      = 10     ## run DeepFace every 10 frames
 
-BATCH_SIZE        = 200    ## stop cleanly after this many videos; re-run to continue
-                           ## set to 0 to run everything in one go (not recommended)
+BATCH_SIZE        = 200    ## how many videos to process per loop before pausing for GC
+                           ## the script loops automatically — no need to re-run manually
 
 DOWNLOAD_RETRIES  = 3      ## how many times to retry a failed download
 GC_EVERY          = 50     ## call gc.collect() every N videos to release RAM
+
+BROWSER           = "chrome"  ## browser to borrow YouTube cookies from — change to
+                               ## "firefox", "safari", "edge", or "brave" if needed
 
 
 ## output columns
@@ -121,6 +127,7 @@ def download_clip(video_id: str) -> "Path | None":
                 "yt-dlp",
                 "--quiet",
                 "--no-warnings",
+                "--cookies-from-browser", BROWSER,
                 "--format",
                 "bestvideo[height<=720][ext=mp4]+bestaudio[ext=m4a]"
                 "/best[height<=720][ext=mp4]/best[height<=720]",
@@ -438,7 +445,8 @@ def extract_metadata_features(row: dict) -> dict:
 
 ## main
 
-def extract():
+def extract() -> bool:
+    ## returns True if there are still videos left to process, False if all done
     if not INPUT.exists():
         raise FileNotFoundError("labelled_videos.csv not found — run label_videos.py first.")
 
@@ -580,17 +588,31 @@ def extract():
     except OSError:
         pass  ## tmp dir not empty — leave it, cleanup runs at next startup
 
+    remaining_count = len(all_rows) - len(done) - len(failed)
+
     log.info("=" * 70)
     log.info(f"Batch complete.")
     log.info(f"  this run  : {batch_success} extracted,  {batch_failed} skipped")
     log.info(f"  total done: {len(done)}")
-    log.info(f"  remaining : {len(all_rows) - len(done) - len(failed)}")
+    log.info(f"  remaining : {remaining_count}")
     log.info(f"  saved to  : {OUTPUT}")
 
-    if len(done) + len(failed) < len(all_rows):
-        log.info("")
-        log.info("Re-run the script to continue with the next batch.")
+    return remaining_count > 0
 
 
 if __name__ == "__main__":
-    extract()
+    batch_num = 1
+    while True:
+        log.info(f"{'=' * 70}")
+        log.info(f"Starting batch {batch_num} ...")
+        log.info(f"{'=' * 70}")
+        has_more = extract()
+        if not has_more:
+            log.info("")
+            log.info("All videos processed — extraction complete!")
+            break
+        log.info("")
+        log.info(f"Batch {batch_num} done. Starting batch {batch_num + 1} automatically ...")
+        log.info("")
+        batch_num += 1
+        gc.collect()

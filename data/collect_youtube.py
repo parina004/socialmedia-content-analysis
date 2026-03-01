@@ -1,13 +1,13 @@
 ## We need 5,000 YouTube videos for training Model B (virality prediction).
 ## This script talks to the YouTube API, searches 10 different categories,
 ## grabs 500 videos per category, and saves everything to data/videos.csv.
-##
+
 ## YouTube gives you 10,000 free API "units" per day per account.
 ## We have 3 API keys, so 30,000 units total — enough to finish in one run.
 ## If one key runs out mid-way, we automatically switch to the next one.
 ## If ALL keys run out (shouldn't happen), we save progress and stop —
 ## just run the script again tomorrow and it picks up where it left off.
-##
+
 ## Run with:  uv run python data/collect_youtube.py
 
 import os
