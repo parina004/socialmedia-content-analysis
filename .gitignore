@@ -17,3 +17,5 @@ data/videos/
 data/viral/
 data/not_viral/
 data/.tmp_clips/
+data/model_a_datasets/faceforensics/
+data/model_a_datasets/dfdc/
