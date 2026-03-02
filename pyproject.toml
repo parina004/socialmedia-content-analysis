@@ -30,4 +30,6 @@ dependencies = [
     "setuptools",
     "tqdm>=4.67.3",
     "kaggle>=1.7.4.5",
+    "huggingface-hub>=1.5.0",
+    "datasets>=4.6.1",
 ]
