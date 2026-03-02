@@ -8,7 +8,7 @@
 ## If ALL keys run out (shouldn't happen), we save progress and stop —
 ## just run the script again tomorrow and it picks up where it left off.
 
-## Run with:  uv run python data/collect_youtube.py
+## Run with:  uv run python data/model_b_datasets/collect_youtube.py
 
 import os
 import csv
@@ -32,7 +32,7 @@ log = logging.getLogger(__name__)
 ## file paths
 
 BASE   = Path(__file__).parent                        ## this is the /data folder
-OUTPUT = BASE / "videos.csv"                          ## where we save all collected videos
+OUTPUT = BASE / "csv" / "videos.csv"                  ## where we save all collected videos
 CKPT   = BASE / ".collection_checkpoint.json"         ## saves progress in case we stop early
 
 

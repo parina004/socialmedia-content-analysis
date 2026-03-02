@@ -18,7 +18,7 @@
 ## Ratios matter more than raw counts — a video with 10K likes and 10M views
 ## is less engaging than one with 5K likes and 50K views. The ratio tells the truth.
 ##
-## Run with:  uv run python data/label_videos.py
+## Run with:  uv run python data/model_b_datasets/label_videos.py
 
 import csv
 import logging
@@ -32,8 +32,8 @@ log = logging.getLogger(__name__)
 ## file paths
 
 BASE   = Path(__file__).parent
-INPUT  = BASE / "videos.csv"
-OUTPUT = BASE / "labelled_videos.csv"
+INPUT  = BASE / "csv" / "videos.csv"
+OUTPUT = BASE / "csv" / "labelled_videos.csv"
 
 
 ## labelling thresholds
