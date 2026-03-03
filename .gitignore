@@ -23,6 +23,7 @@ data/model_a_datasets/deepfake_datasets/*
 data/model_a_datasets/ai_datasets/*
 !data/model_a_datasets/ai_datasets/.gitkeep
 data/model_a_datasets/frames/
+data/model_a_datasets/videos/
 
 # Model B datasets — ignore large data files but track Python scripts
 data/model_b_datasets/csv/*
