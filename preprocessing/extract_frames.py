@@ -53,7 +53,7 @@
 ## If the script is interrupted, just run it again — it picks up from where
 ## it left off via a checkpoint file. The checkpoint is deleted when done.
 
-## Run with:  uv run python preprocessing/extract_frames.py
+## Run with:  uv run preprocessing/extract_frames.py
 
 import csv
 import json
