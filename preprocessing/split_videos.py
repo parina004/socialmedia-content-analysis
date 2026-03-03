@@ -15,7 +15,7 @@
 ## After moving, manifest.csv is updated so original_video_path points to
 ## the new location. Safe to re-run — already-moved files are skipped.
 ##
-## Run with:  uv run python preprocessing/split_videos.py
+## Run with:  uv run preprocessing/split_videos.py
 
 import csv
 import logging

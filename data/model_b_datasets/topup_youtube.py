@@ -10,7 +10,7 @@
 ## It reads videos.csv first to know which video IDs we already have,
 ## then appends new unique ones until each category reaches 500.
 
-## Run with:  uv run python data/model_b_datasets/topup_youtube.py
+## Run with:  uv run data/model_b_datasets/topup_youtube.py
 
 import os
 import csv

@@ -1,7 +1,7 @@
 ## Downloads FaceForensics++ and Deep Fake Detection public data release.
 ##
 ## Usage:
-##   uv run python data/model_a_datasets/ff_download.py data/model_a_datasets/faceforensics \
+##   uv run data/model_a_datasets/ff_download.py data/model_a_datasets/faceforensics \
 ##       --dataset all --compression c23 --type videos --server EU2
 ##
 ## Source: https://github.com/ondyari/FaceForensics
