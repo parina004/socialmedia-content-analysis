@@ -13,7 +13,7 @@
 ##   metrics.txt            - full human-readable report
 ##   feature_importance.png - bar chart showing which features matter most
 
-## Run with:  uv run python model_b/train.py
+## Run with:  uv run model_b/train.py
 
 import json
 import logging
