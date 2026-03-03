@@ -24,6 +24,8 @@ data/model_a_datasets/ai_datasets/*
 !data/model_a_datasets/ai_datasets/.gitkeep
 data/model_a_datasets/frames/
 data/model_a_datasets/videos/
+data/model_a_datasets/.tmp_youtube_real/
+data/model_a_datasets/.youtube_real_checkpoint.json
 
 # Model B datasets — ignore large data files but track Python scripts
 data/model_b_datasets/csv/*
