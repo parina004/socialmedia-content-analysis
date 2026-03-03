@@ -1,1 +1,33 @@
 .DS_Store
+.env
+
+# uv Python environment variables
+.venv/
+__pycache__/
+*.pyc
+*.pyo
+
+.gitkeep
+
+# Dataset files too large for GitHub, so will skip
+data/*.csv
+data/*.json
+data/videos/
+data/viral/
+data/not_viral/
+data/.tmp_clips/
+data/model_a_datasets/faceforensics/
+data/model_a_datasets/dfdc/
+data/model_a_datasets/deepfake_datasets/*
+!data/model_a_datasets/deepfake_datasets/.gitkeep
+data/model_a_datasets/ai_datasets/*
+!data/model_a_datasets/ai_datasets/.gitkeep
+data/model_a_datasets/frames/
+data/model_a_datasets/videos/
+
+# Model B datasets — ignore large data files but track Python scripts
+data/model_b_datasets/csv/*
+!data/model_b_datasets/csv/.gitkeep
+data/model_b_datasets/.collection_checkpoint.json
+data/model_b_datasets/.extract_checkpoint.json
+data/model_b_datasets/.tmp_clips/
