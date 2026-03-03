@@ -31,3 +31,21 @@ data/model_b_datasets/csv/*
 data/model_b_datasets/.collection_checkpoint.json
 data/model_b_datasets/.extract_checkpoint.json
 data/model_b_datasets/.tmp_clips/
+
+# Model A — trained outputs and large feature files
+model_a/forensic_cnn.pth
+model_a/features_train.npz
+model_a/features_test.npz
+model_a/submodel1.json
+model_a/submodel2.json
+model_a/metrics.json
+model_a/metrics.txt
+model_a/.extract_checkpoint.json
+model_a/.sm1_checkpoint.json
+model_a/.sm2_checkpoint.json
+
+# Model B — trained outputs
+model_b/model.pkl
+model_b/metrics.json
+model_b/metrics.txt
+model_b/feature_importance.png
