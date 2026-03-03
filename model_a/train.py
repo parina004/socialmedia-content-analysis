@@ -94,6 +94,21 @@ def load_split(npz_path: Path):
     )
 
 
+def log_source_breakdown(y: np.ndarray, sources: np.ndarray, split: str):
+    """Log how many real / deepfake / ai_generated videos came from each source."""
+    label_names = {REAL: "real", DEEPFAKE: "deepfake", AI_GENERATED: "ai_gen"}
+    from collections import defaultdict
+    counts: dict[str, dict[str, int]] = defaultdict(lambda: defaultdict(int))
+    for label, src in zip(y, sources):
+        counts[str(src)][label_names[int(label)]] += 1
+    log.info(f"  {split} breakdown by source:")
+    for src in sorted(counts):
+        c = counts[src]
+        parts = "  ".join(f"{k}={v}" for k, v in sorted(c.items()))
+        log.info(f"    {src:<35} {parts}")
+    log.info("")
+
+
 def make_xgb_objective(X_train: np.ndarray, y_train: np.ndarray, spw: float):
     cv = StratifiedKFold(n_splits=N_FOLDS, shuffle=True, random_state=SEED)
 
@@ -305,8 +320,8 @@ def main():
     log.info("=" * 62)
     log.info("")
 
-    X_train, y_train, _, _ = load_split(TRAIN_NPZ)
-    X_test,  y_test,  _, _ = load_split(TEST_NPZ)
+    X_train, y_train, _, src_train = load_split(TRAIN_NPZ)
+    X_test,  y_test,  _, src_test  = load_split(TEST_NPZ)
 
     log.info(f"Feature shape — train: {X_train.shape}  test: {X_test.shape}")
     log.info(
@@ -320,6 +335,8 @@ def main():
         f"ai_gen: {(y_test==AI_GENERATED).sum()}"
     )
     log.info("")
+    log_source_breakdown(y_train, src_train, "train")
+    log_source_breakdown(y_test,  src_test,  "test")
 
     ## Submodel 2 is the cascade entry point — it catches AI-generated videos first
 
