@@ -1,19 +1,18 @@
 ## Model A — Append Real Features  (run after collect_youtube_real.py)
-##
+
 ## Extracts features ONLY for the newly collected youtube_interviews videos
 ## and appends them to the existing features_train.npz / features_test.npz.
 ## The existing ~17,000 videos are NOT reprocessed — this is intentional to
 ## avoid re-running a multi-hour job when we only added one new source.
-##
+
 ## Uses the already-trained forensic_cnn.pth — does NOT retrain the CNN.
 ## The ForensicCNN was trained on the original data; we reuse it as-is for
 ## the new real clips (adding real clips doesn't change the CNN's behaviour
 ## since Stream 2 is frozen when we run inference here).
-##
+
 ## After this script finishes:
 ##   1. Delete model_a/.sm1_checkpoint.json  (forces Submodel 1 to retrain)
-##   2. Run model_a/train.py                 (Submodel 2 is skipped, Submodel 1 retrains)
-##
+##   2. Run model_a/train.py                 (Submodel 2 is skipped, Submodel 1 retrains
 ## Run with:  uv run model_a/append_real_features.py
 
 import csv
@@ -66,7 +65,8 @@ IMAGENET_NORM = __import__("torchvision").transforms.Normalize(
 TO_TENSOR = __import__("torchvision").transforms.ToTensor()
 
 
-## ── forensic signal helpers (same as extract_features.py) ────────────────────
+## SRM and DCT helpers — same logic as extract_features.py, copied here so
+## this script can run standalone without importing from that module.
 
 _SRM_K = [
     torch.tensor([[0, 0, 0], [0.5, -1, 0.5], [0, 0, 0]],           dtype=torch.float32),
@@ -103,7 +103,8 @@ def frame_to_forensic_tensor(img_np: np.ndarray) -> torch.Tensor:
     return torch.cat([dct, srm], dim=0)
 
 
-## ── MediaPipe geometric features (same as extract_features.py) ───────────────
+## MediaPipe landmark indices and geometric feature computation.
+## Produces a 16-dim vector of facial ratios per frame.
 
 _LM = {
     "left_eye_outer": 33,  "right_eye_outer": 263,
@@ -163,7 +164,8 @@ def geometric_features(img_np: np.ndarray) -> np.ndarray:
     return np.clip(feats, 0.0, 5.0)
 
 
-## ── ForensicCNN (same architecture as extract_features.py) ───────────────────
+## ForensicCNN architecture — must match extract_features.py exactly so we can
+## load the existing forensic_cnn.pth weights without errors.
 
 class ForensicCNN(nn.Module):
     def __init__(self, n_classes: int = 3):
@@ -181,8 +183,6 @@ class ForensicCNN(nn.Module):
         feat = self.backbone(x).squeeze(-1).squeeze(-1)
         return self.head(feat), feat
 
-
-## ── feature extraction ───────────────────────────────────────────────────────
 
 def build_efficientnet() -> nn.Module:
     model = timm.create_model("efficientnet_b4", pretrained=True, num_classes=0, global_pool="avg")
@@ -234,8 +234,6 @@ def extract_video_features(
     ]).astype(np.float32)
 
 
-## ── NPZ helpers ──────────────────────────────────────────────────────────────
-
 def load_npz(path: Path) -> dict:
     """Load an NPZ and return it as a plain dict with mutable lists."""
     if not path.exists():
@@ -261,8 +259,6 @@ def save_npz(path: Path, d: dict):
     )
 
 
-## ── checkpoint ───────────────────────────────────────────────────────────────
-
 def load_checkpoint() -> set[str]:
     if CKPT_PATH.exists():
         return set(json.loads(CKPT_PATH.read_text()))
@@ -272,8 +268,6 @@ def load_checkpoint() -> set[str]:
 def save_checkpoint(done: set[str]):
     CKPT_PATH.write_text(json.dumps(list(done)))
 
-
-## ── main ─────────────────────────────────────────────────────────────────────
 
 def main():
     log.info("=" * 62)
