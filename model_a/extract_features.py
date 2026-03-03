@@ -24,7 +24,7 @@
 
 ## Checkpointed every video — safe to interrupt and resume.
 
-## Run with:  uv run python model_a/extract_features.py
+## Run with:  uv run model_a/extract_features.py
 
 import csv
 import json

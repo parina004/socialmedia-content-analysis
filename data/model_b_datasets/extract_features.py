@@ -12,7 +12,7 @@
 ## yt-dlp uses browser cookies so YouTube doesn't block it as a bot.
 ## Make sure BROWSER below matches the browser you're logged into YouTube with.
 
-## Run with:  uv run python data/model_b_datasets/extract_features.py
+## Run with:  uv run data/model_b_datasets/extract_features.py
 
 import csv
 import gc
