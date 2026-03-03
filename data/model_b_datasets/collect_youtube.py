@@ -8,7 +8,7 @@
 ## If ALL keys run out (shouldn't happen), we save progress and stop —
 ## just run the script again tomorrow and it picks up where it left off.
 
-## Run with:  uv run python data/model_b_datasets/collect_youtube.py
+## Run with:  uv run data/model_b_datasets/collect_youtube.py
 
 import os
 import csv

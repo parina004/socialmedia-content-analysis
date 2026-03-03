@@ -26,7 +26,7 @@
 ##   metrics.json      — all evaluation numbers as a JSON dict
 ##   metrics.txt       — human-readable full report
 
-## Run with:  uv run python model_a/train.py
+## Run with:  uv run model_a/train.py
 
 import json
 import logging

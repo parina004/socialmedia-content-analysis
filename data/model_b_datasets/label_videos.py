@@ -18,7 +18,7 @@
 ## Ratios matter more than raw counts — a video with 10K likes and 10M views
 ## is less engaging than one with 5K likes and 50K views. The ratio tells the truth.
 ##
-## Run with:  uv run python data/model_b_datasets/label_videos.py
+## Run with:  uv run data/model_b_datasets/label_videos.py
 
 import csv
 import logging
