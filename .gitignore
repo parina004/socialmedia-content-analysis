@@ -43,6 +43,7 @@ model_a/submodel2.json
 model_a/metrics.json
 model_a/metrics.txt
 model_a/.extract_checkpoint.json
+model_a/.append_checkpoint.json
 model_a/.sm1_checkpoint.json
 model_a/.sm2_checkpoint.json
 
