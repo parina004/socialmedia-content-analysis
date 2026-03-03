@@ -219,7 +219,7 @@ def collect_video_ids(target: int) -> list[str]:
         new_ids = [vid for vid in ids if vid not in seen]
         seen.update(new_ids)
         video_ids.extend(new_ids)
-        log.info(f"    → {len(new_ids)} new IDs  (total: {len(video_ids)})")
+        log.info(f"    -> {len(new_ids)} new IDs  (total: {len(video_ids)})")
         time.sleep(0.5)
 
     log.info(f"  Collected {len(video_ids)} candidate IDs total")
@@ -425,7 +425,7 @@ def main():
             ## step 1: download the first 30 seconds
             success = download_clip(video_id, tmp_path)
             if not success:
-                log.warning(f"    → download failed")
+                log.warning(f"    -> download failed")
                 n_failed += 1
                 done_ids.add(video_id)
                 state.update({"done": list(done_ids), "accepted": n_accepted,
@@ -443,12 +443,12 @@ def main():
             tmp_path.unlink(missing_ok=True)
 
             if frame_count == -1:
-                log.info(f"    → no face detected, skipping")
+                log.info(f"    -> no face detected, skipping")
                 n_no_face += 1
                 if frame_dir.exists():
                     shutil.rmtree(frame_dir)
             elif frame_count == 0:
-                log.warning(f"    → unreadable video, skipping")
+                log.warning(f"    -> unreadable video, skipping")
                 n_failed += 1
             else:
                 ## accepted — add to manifest
@@ -463,7 +463,7 @@ def main():
                 })
                 manifest_file.flush()
                 n_accepted += 1
-                log.info(f"    → accepted [{split}]  {frame_count} frames  (total: {n_accepted})")
+                log.info(f"    -> accepted [{split}]  {frame_count} frames  (total: {n_accepted})")
 
             ## save checkpoint after every video so interruptions are safe
             done_ids.add(video_id)
