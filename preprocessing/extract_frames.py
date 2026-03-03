@@ -412,6 +412,10 @@ def main():
     log.info("")
 
     done = load_checkpoint()
+    all_uids = {f"{e['dataset_source']}__{e['video_id']}" for e in entries}
+    if all_uids and all_uids.issubset(done):
+        log.info("All videos already processed — nothing to do. Exiting.")
+        return
     if done:
         log.info(f"Resuming — {len(done)} videos already done, skipping them.")
 
