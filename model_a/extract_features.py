@@ -401,6 +401,19 @@ def main():
     log.info(f"Videos — train: {len(rows_train)}  test: {len(rows_test)}")
     log.info("")
 
+    ## log a per-source breakdown so it's clear which datasets are included
+    from collections import Counter
+    source_counts = Counter(r["dataset_source"] for r in rows)
+    label_counts  = Counter(r["label"] for r in rows)
+    log.info("Dataset sources:")
+    for src, n in sorted(source_counts.items()):
+        log.info(f"  {src:<35} {n}")
+    log.info("")
+    log.info("Label distribution:")
+    for lbl, n in sorted(label_counts.items()):
+        log.info(f"  {lbl:<15} {n}")
+    log.info("")
+
     ## build models
     log.info("Loading EfficientNet-B4 (pretrained, frozen) ...")
     efficientnet = build_efficientnet()
