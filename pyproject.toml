@@ -27,9 +27,18 @@ dependencies = [
     ## Numerical
     "numpy>=1.24.0,<2.0",
     "scipy>=1.12.0",
+    "pandas>=2.0.0",
     "setuptools",
     "tqdm>=4.67.3",
     "kaggle>=1.7.4.5",
     "huggingface-hub>=1.5.0",
     "datasets>=4.6.1",
+    ## Model B — virality training
+    "lightgbm>=4.0.0",
+    "optuna>=3.6.0",
+    "scikit-learn>=1.3.0",
+    "matplotlib>=3.7.0",
+    ## Model A — synthetic detection
+    "timm>=0.9.0",
+    "xgboost>=2.0.0",
 ]
