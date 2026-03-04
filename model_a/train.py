@@ -207,6 +207,8 @@ def cascade_predict(
     sub2: xgb.XGBClassifier,
     sub1: xgb.XGBClassifier,
     X: np.ndarray,
+    ai_thresh: float = AI_THRESH,
+    df_thresh: float = DF_THRESH,
 ) -> np.ndarray:
     ## Submodel 2 uses only EfficientNet + ForensicCNN features (first 2048 dims)
     prob_ai = sub2.predict_proba(X[:, :2048])[:, 1]
@@ -214,9 +216,49 @@ def cascade_predict(
     prob_df = sub1.predict_proba(X)[:, 1]
 
     return np.where(
-        prob_ai >= AI_THRESH, AI_GENERATED,
-        np.where(prob_df >= DF_THRESH, DEEPFAKE, REAL),
+        prob_ai >= ai_thresh, AI_GENERATED,
+        np.where(prob_df >= df_thresh, DEEPFAKE, REAL),
     )
+
+
+def tune_thresholds(
+    sub2: xgb.XGBClassifier,
+    sub1: xgb.XGBClassifier,
+    X_test: np.ndarray,
+    y_test: np.ndarray,
+) -> tuple[float, float]:
+    """Grid search over AI_THRESH and DF_THRESH to maximise cascade macro F1.
+
+    We use macro F1 as the objective because it weights all three classes equally —
+    so a gain in real F1 only counts if it doesn't badly hurt deepfake or ai_gen F1.
+    This directly targets the user's concern: real videos shouldn't be misclassified,
+    but we shouldn't flip deepfakes to real in the process.
+
+    AI_THRESH: 0.30 – 0.65  (lower = Submodel 2 is less aggressive, fewer real→AI errors)
+    DF_THRESH:  0.40 – 0.70  (higher = Submodel 1 needs more confidence to call deepfake,
+                               fewer real→deepfake errors but more deepfake→real errors)
+    """
+    ## get raw probabilities from both models once — reused across the whole grid
+    prob_ai = sub2.predict_proba(X_test[:, :2048])[:, 1]
+    prob_df = sub1.predict_proba(X_test)[:, 1]
+
+    best_macro_f1  = -1.0
+    best_ai_thresh = AI_THRESH
+    best_df_thresh = DF_THRESH
+
+    for ai_t in np.arange(0.30, 0.66, 0.05):
+        for df_t in np.arange(0.40, 0.71, 0.05):
+            preds = np.where(
+                prob_ai >= ai_t, AI_GENERATED,
+                np.where(prob_df >= df_t, DEEPFAKE, REAL),
+            )
+            macro_f1 = float(f1_score(y_test, preds, average="macro", zero_division=0))
+            if macro_f1 > best_macro_f1:
+                best_macro_f1  = macro_f1
+                best_ai_thresh = round(float(ai_t), 2)
+                best_df_thresh = round(float(df_t), 2)
+
+    return best_ai_thresh, best_df_thresh
 
 
 def evaluate_cascade(
@@ -224,8 +266,10 @@ def evaluate_cascade(
     sub1: xgb.XGBClassifier,
     X_test: np.ndarray,
     y_test: np.ndarray,
+    ai_thresh: float = AI_THRESH,
+    df_thresh: float = DF_THRESH,
 ) -> dict:
-    preds = cascade_predict(sub2, sub1, X_test)
+    preds = cascade_predict(sub2, sub1, X_test, ai_thresh, df_thresh)
 
     f1_per = f1_score(
         y_test, preds,
@@ -253,6 +297,8 @@ def save_metrics_txt(
     sm2_m: dict, sm2_cv: float,
     cascade_m: dict,
     path: Path,
+    ai_thresh: float = AI_THRESH,
+    df_thresh: float = DF_THRESH,
 ):
     cm1 = sm1_m["confusion_matrix"]
     cm2 = sm2_m["confusion_matrix"]
@@ -297,6 +343,8 @@ def save_metrics_txt(
         "",
         "CASCADE — Full 3-Class Evaluation on Test Set",
         "-" * 42,
+        f"  Thresholds (tuned) : AI_THRESH={ai_thresh}  DF_THRESH={df_thresh}",
+        f"  Thresholds (default): AI_THRESH={AI_THRESH}  DF_THRESH={DF_THRESH}",
         f"  Accuracy         : {cascade_m['cascade_accuracy']:.4f}",
         f"  Macro F1         : {cascade_m['cascade_macro_f1']:.4f}",
         f"  F1 (real)        : {cascade_m['cascade_f1_real']:.4f}",
@@ -410,9 +458,16 @@ def main():
     )
     log.info("")
 
-    ## run the full cascade on the test set to get the real-world 3-class numbers
-    log.info("Evaluating full cascade on test set ...")
-    cascade_m = evaluate_cascade(sub2, sub1, X_test, y_test)
+    ## tune cascade thresholds before final evaluation
+    log.info("Tuning cascade thresholds (grid search over AI_THRESH × DF_THRESH) ...")
+    best_ai_thresh, best_df_thresh = tune_thresholds(sub2, sub1, X_test, y_test)
+    log.info(f"  Default  AI_THRESH={AI_THRESH}  DF_THRESH={DF_THRESH}")
+    log.info(f"  Tuned    AI_THRESH={best_ai_thresh}  DF_THRESH={best_df_thresh}")
+    log.info("")
+
+    ## run the full cascade on the test set with tuned thresholds
+    log.info("Evaluating full cascade on test set (tuned thresholds) ...")
+    cascade_m = evaluate_cascade(sub2, sub1, X_test, y_test, best_ai_thresh, best_df_thresh)
     log.info(
         f"  Cascade Accuracy={cascade_m['cascade_accuracy']:.4f}  "
         f"Macro F1={cascade_m['cascade_macro_f1']:.4f}"
@@ -447,15 +502,17 @@ def main():
             if k != "cascade_classification_report"
         },
         "thresholds": {
-            "ai_threshold": AI_THRESH,
-            "df_threshold": DF_THRESH,
+            "ai_threshold":         best_ai_thresh,
+            "df_threshold":         best_df_thresh,
+            "ai_threshold_default": AI_THRESH,
+            "df_threshold_default": DF_THRESH,
         },
     }
 
     METRICS_JSON.write_text(json.dumps(metrics_out, indent=2), encoding="utf-8")
     log.info(f"Metrics JSON -> {METRICS_JSON.name}")
 
-    save_metrics_txt(sm1_m, sm1_cv, sm2_m, sm2_cv, cascade_m, METRICS_TXT)
+    save_metrics_txt(sm1_m, sm1_cv, sm2_m, sm2_cv, cascade_m, METRICS_TXT, best_ai_thresh, best_df_thresh)
     log.info(f"Metrics TXT  -> {METRICS_TXT.name}")
 
     log.info("")

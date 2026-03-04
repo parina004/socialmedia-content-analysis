@@ -14,7 +14,7 @@
 ## pick up from where it left off without reprocessing anything.
 ##
 ## Only 30 seconds are downloaded per video, so total disk usage is
-## roughly 2-5 MB per clip — about 4-10 GB for 2000 clips total.
+## roughly 2-5 MB per clip — about 6-15 GB for 3000 clips total.
 ##
 ## Run with:  uv run data/model_a_datasets/collect_youtube_real.py
 
@@ -38,8 +38,6 @@ logging.basicConfig(level=logging.INFO, format="%(asctime)s  %(message)s")
 log = logging.getLogger(__name__)
 
 
-## ── paths ────────────────────────────────────────────────────────────────────
-
 ROOT     = Path(__file__).parent.parent.parent   ## project root
 DATA     = ROOT / "data" / "model_a_datasets"
 OUT      = DATA / "frames"
@@ -48,9 +46,7 @@ CKPT     = DATA / ".youtube_real_checkpoint.json"
 TMPDIR   = DATA / ".tmp_youtube_real"
 
 
-## ── collection settings ──────────────────────────────────────────────────────
-
-TARGET_VIDEOS     = 2000   ## stop after this many accepted face clips
+TARGET_VIDEOS     = 3000   ## stop after this many accepted face clips
 MAX_FRAMES        = 30     ## max frames per clip (1 fps = 30 seconds)
 IMG_SIZE          = 224    ## resize all frames to 224×224
 JPEG_QUALITY      = 95
@@ -84,42 +80,42 @@ MANIFEST_FIELDS = [
 ]
 
 
-## ── search queries ───────────────────────────────────────────────────────────
-
-## 30 queries chosen to maximise chance of real people talking on camera.
-## 30 × up to 200 results = up to 6,000 candidates, which easily covers
-## the 2,000 target after face filtering.
+## 30 solo-speaker queries chosen to find videos with a single person talking
+## directly to camera — vlogs, lessons, reviews, commentaries, etc.
+## These are intentionally different from the first 2000-clip collection
+## (which covered interviews, panels, talks) to maximise variety.
+## 30 × up to 200 results = up to 6,000 candidates for the 1,000 new clips.
 SEARCH_QUERIES = [
-    "celebrity interview 2023",
-    "stand up comedy show",
-    "TED talk",
-    "podcast interview",
-    "news anchor interview",
-    "late night show interview",
-    "press conference",
-    "motivational speaker",
-    "documentary talking head",
-    "political speech",
-    "science lecture university",
-    "comedy show performance",
-    "journalist interview",
-    "startup founder interview",
-    "athlete interview",
-    "actor interview",
-    "author book interview",
-    "CEO business interview",
-    "doctor medical talk",
-    "professor lecture",
-    "comedian monologue",
-    "news panel discussion",
-    "debate speech",
-    "TEDx talk",
-    "talk show guest",
-    "film director interview",
-    "musician interview",
-    "youtuber vlog talking",
-    "expert opinion interview",
-    "conference keynote speech",
+    "solo vlogger talking to camera 2023",
+    "one person tutorial face cam",
+    "solo YouTube essay video",
+    "individual fitness instructor explanation",
+    "single person cooking channel host",
+    "solo travel vlogger speaking face",
+    "person to camera book review",
+    "solo reaction commentary video",
+    "science communicator explainer solo",
+    "solo political analyst commentary 2023",
+    "one person English language lesson",
+    "solo sports analyst breakdown",
+    "solo news commentary vlog",
+    "financial advisor talking solo",
+    "individual philosophy discussion camera",
+    "solo history teacher lesson camera",
+    "single person product review 2023",
+    "solo mental health discussion",
+    "solo storytelling to camera",
+    "solo art tutorial instructor",
+    "individual programming tutorial face",
+    "solo career advice vlog",
+    "one person meditation guide speaking",
+    "solo film analysis commentary",
+    "personal development advice solo speaker",
+    "solo music teacher lesson",
+    "person speaking directly to audience solo",
+    "solo filmmaker talking about craft",
+    "solo ted style talk individual",
+    "solo English teacher tutorial face",
 ]
 
 ## reuses the same API key env vars as Model B collection
@@ -130,8 +126,6 @@ API_KEYS = [k for k in [
 ] if k]
 
 
-## ── helpers ──────────────────────────────────────────────────────────────────
-
 def _rel(path: Path) -> str:
     """Return a path relative to the project root, for storing in manifest.csv."""
     return str(path.relative_to(ROOT))
@@ -140,8 +134,6 @@ def _rel(path: Path) -> str:
 def build_youtube_client(key: str):
     return build("youtube", "v3", developerKey=key)
 
-
-## ── YouTube search ───────────────────────────────────────────────────────────
 
 def search_videos(youtube, query: str, max_results: int = MAX_RESULTS_PER_QUERY) -> list[str]:
     """Search YouTube for a query and return video IDs.
@@ -226,8 +218,6 @@ def collect_video_ids(target: int) -> list[str]:
     return video_ids
 
 
-## ── download ─────────────────────────────────────────────────────────────────
-
 def download_clip(video_id: str, out_path: Path) -> bool:
     """Download the first CLIP_SECONDS seconds of a YouTube video.
     Uses yt-dlp at the lowest available quality — we only need visual features."""
@@ -249,8 +239,6 @@ def download_clip(video_id: str, out_path: Path) -> bool:
         log.warning(f"    Download error for {video_id}: {e}")
         return False
 
-
-## ── face check + frame extraction ───────────────────────────────────────────
 
 def count_faces_in_early_frames(
     cap: cv2.VideoCapture,
@@ -326,8 +314,6 @@ def extract_frames_with_face_check(
         cap.release()
 
 
-## ── checkpoint ───────────────────────────────────────────────────────────────
-
 def load_checkpoint() -> dict:
     """Load the checkpoint file so we can resume after an interruption.
     If no checkpoint exists, return a fresh state."""
@@ -344,8 +330,6 @@ def assign_split(accepted_count: int) -> str:
     """Every 5th accepted clip goes to test (20%), the rest to train (80%)."""
     return "test" if (accepted_count % 5 == 0) else "train"
 
-
-## ── main ─────────────────────────────────────────────────────────────────────
 
 def main():
     TMPDIR.mkdir(parents=True, exist_ok=True)
