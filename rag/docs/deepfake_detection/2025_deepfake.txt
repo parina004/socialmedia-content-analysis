@@ -1,0 +1,14 @@
+Paper Title: Multimodal Framework for Deep Fake Detection and Content Moderation Using CNN, ViT, and Audio-Visual Analysis 
+Authors: Anoushka Panja, Debamalya Chakravorty, Diganta Saha, and Arijit Das 
+Year: 2025 
+
+1. Problem Addressed:
+The rise of sophisticated deepfake technologies enables the creation of hyper-realistic synthetic media that deceives traditional detection. Existing systems often rely on single-modal approaches that are less robust against diverse forms of malicious content, including hate speech in regional languages.
+2. Methodology:
+The paper proposes a modular pipeline for real-time multimedia analysis:Visual Analysis: Uses CNNs (ResNet, VGG16) for spatial artifacts and Vision Transformers (ViT) to capture global and long-range dependencies across video frames.Audio Analysis: Extracts MFCCs and spectrograms; uses RNNs/CNNs to identify synthetic voice patterns and temporal anomalies.Text/Content Moderation: Employs OCR (Tesseract) to extract text from frames and BERT for hate speech classification.Regional Support: Integrates Bengali speech-to-text to handle low-resource regional languages.Fusion: Implements a late fusion strategy to combine audio and video probabilistic scores into a final classification.
+3. Key Findings:
+The framework achieved 95.4% accuracy in video deepfake detection and 93.5% in audio deepfake detection.Hate speech detection reached an F1-score of 90.7%.The integration of ViT was specifically noted for its effectiveness in capturing complex visual anomalies that traditional CNNs might miss.
+4. Limitations:
+Fusion Techniques: The authors suggest that while late fusion is effective, more advanced attention-based fusion could further improve performance.Adversarial Robustness: The system needs more development to remain reliable in adversarial environments where creators intentionally try to bypass detection.Language Scope: While it includes Bengali, the framework needs expansion to other regional/low-resource languages to be truly inclusive.
+5. Relevance to Our System:
+Architecture Alignment: Your system’s Model A (visual patterns, frequency, and facial geometry) mirrors this paper’s use of parallel streams (CNN/ViT for spatial/temporal artifacts).Feature Extraction for Virality: Your virality model uses "visual quality," "audio tempo," and "speech patterns." This paper validates the extraction of similar technical features (spectrograms, MFCCs) as foundational for understanding video content.Scalability & Deployment: The paper emphasizes batch processing and GPU pipelines for large-scale analysis, which supports your choice of hosting the FastAPI backend on Render with HuggingFace model storage.Forensic Explanation: This paper provides the "forensic" evidence (spatial inconsistencies, facial artifacts, and audio anomalies) your Tool One needs to explain its verdict to the user.

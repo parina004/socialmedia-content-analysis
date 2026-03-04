@@ -1,0 +1,14 @@
+Paper Title: Detection of GAN-Generated Images by Estimating Artifact Similarity 
+Authors: Weichuang Li, Peisong He, Haoliang Li, Hongxia Wang, and Ruimei Zhang 
+Year: 2022 
+
+1. Problem Addressed: 
+The paper tackles the restricted performance of AI-detection models when facing unseen GAN models (cross-domain scenarios) and their lack of robustness against common post-processing like JPEG compression or resizing.
+2. Methodology: 
+The authors propose GASE-Net, which uses a two-stage process: representation learning and representation comparison. It uses a ResNet-50 backbone with Instance Normalization in shallow layers to extract generalized features and a "Category and Domain-Aware" (CDA) loss function to better distinguish between real and AI-generated artifacts.
+3. Key Findings: 
+GASE-Net outperformed state-of-the-art methods in cross-domain tests, particularly on Transformer-based GANs, where it surpassed others by over 30%. It also showed high robustness to Gaussian blur and resizing even without data augmentation during training.
+4. Limitations: 
+Detection accuracy still decreases as post-processing intensity increases (e.g., very low-quality JPEG compression). The method requires a "reference set" of known GAN images to calculate prototypes for comparison.
+5. Relevance to Our System: 
+This is the core logic for your Tool One forensic verdict. The "Artifact Similarity" approach allows your system to detect deepfakes from new AI models it wasn't specifically trained on. The detailed evidence report can use this research to explain that the video was flagged because its "frequency artifacts and up-sampling patterns match known synthetic generation traces."
