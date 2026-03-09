@@ -1,0 +1,14 @@
+Paper Title: Reemergence Modeling of Intelligent Information Diffusion in Heterogeneous Social Networks: The Dynamics Perspective
+Authors: Yinxue Yi, Zufan Zhang, Laurence T. Yang, Chenquan Gan, Xianjun Deng, and Lingzhi Yi
+Year: 2021
+
+Problem Addressed:
+Traditional diffusion models fail to account for the "reinfection-reemergence" phenomenon, where individuals participate in information spreading multiple times or hesitate due to self-confirming behavior (judging validity).
+Methodology:
+The authors proposed the SUIRS model (Susceptible-Uncertain-Infected-Recovered-Susceptible), which introduces a new "Uncertain" psychological state to reflect the time individuals spend judging the validity of information before forwarding it.
+Key Findings:
+Information diffusion depends on a specific outbreak threshold ($R_0$); if the threshold is met, the information "reemerges" and continues to spread. Social tie strength significantly impacts the velocity and range of this spread.
+Limitations:
+The model is highly mathematical and theoretical; while it predicts if something will spread, it does not provide the "actionable tips" for content improvement that your system offers.
+Relevance to Our System:
+This paper bridges Tool One and Tool Two. The "Uncertain" state (judging validity) is the exact user behavior your deepfake forensic verdict aims to assist. Furthermore, their findings on reemergence can ground your virality score by explaining why certain videos "explode" while others are ignored based on social dynamics.

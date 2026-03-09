@@ -1,0 +1,14 @@
+Paper Title: Structural Hole Theory in Social Network Analysis: A Review 
+Authors: Zihang Lin, Yuwei Zhang, Qingyuan Gong, Yang Chen, Atte Oksanen, and Aaron Yi Ding 
+Year: 2022 
+
+1. Problem Addressed: 
+The paper reviews how certain individuals, called Structural Hole (SH) spanners, occupy bridging positions between unconnected communities in a social network and the advantages they gain from this position.
+2. Methodology: 
+It categorizes detection algorithms for SH spanners into information flow-based (nodes that control the most paths) and network centrality-based (nodes in advantageous positions). It reviews metrics like effective size, efficiency, constraint, and hierarchy.
+3. Key Findings: 
+SH spanners are crucial for information diffusion. In Twitter, just 1% of users occupying SH positions control nearly 80% of information spread between different communities. However, in emotion contagion, SH spanners can be less influential than ordinary users.
+4. Limitations: 
+Most algorithms are designed for static networks and struggle with the high computational complexity required for large-scale, real-time social graphs.
+5. Relevance to Our System: 
+This research grounds Tool Two and your 20-feature virality model. Specifically, it validates your use of "normalized engagement ratios" and "upload timing." The paper's finding that bridging communities is the key to virality (rather than just raw follower count) justifies your decision to exclude subscriber counts from your model to remain fair to small creators. Your AI Agent can use this to suggest: "To increase virality, try sharing this content in a niche community outside your usual circle to act as a Structural Hole spanner."
