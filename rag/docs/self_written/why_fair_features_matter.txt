@@ -1,0 +1,61 @@
+WHY FAIR FEATURES MATTER IN VIRALITY PREDICTION
+
+THE CORE PRINCIPLE
+
+This system is built on a single design principle: virality prediction
+should measure the quality and packaging of the content itself, not the
+size or history of the channel that uploaded it. Every feature was
+deliberately evaluated against this standard. Some were included.
+Some were excluded. The distinction is not arbitrary.
+
+WHAT WAS DELIBERATELY EXCLUDED
+
+Raw subscriber count was excluded because large channels receive more
+views simply from exposure: their existing audience watches regardless
+of content quality. A model trained with subscriber count would learn
+"big channel = viral," which is tautological and useless for a new creator.
+
+Raw view count was excluded because it is the label. Using it as a
+feature would leak the answer into the training data.
+
+Raw like count and raw comment count were excluded because they scale
+with audience size. A channel with 5 million subscribers will collect
+more likes than a channel with 500 subscribers even if the content from
+the smaller channel is objectively better.
+
+Channel age and total video count were excluded because they describe
+creator experience and longevity, not the quality of the specific video
+being uploaded.
+
+WHY NORMALISED RATIOS ARE KEPT
+
+Like-to-view ratio (likes divided by views) and comment-to-view ratio
+(comments divided by views) are retained because dividing by view count
+removes the audience size bias. A video that converts 20% of viewers
+into likes is genuinely more engaging than one that converts 5%,
+regardless of the channel size. These ratios measure content resonance,
+not creator fame.
+
+WHAT IS ACTUALLY MEASURED
+
+The 20 retained features describe:
+- How the video looks and sounds (12 visual and audio features)
+- How the creator chose to present and package it (8 metadata features)
+
+These are within the control of any creator at any stage of their career.
+A new creator with zero subscribers can optimise every single one of these
+features. An established creator cannot inflate these scores simply by
+having a large audience.
+
+WHY THIS MATTERS FOR THE SYSTEM
+
+A fair model is a useful model. If the system told a creator "your content
+has low viral potential" because they have few subscribers, the advice
+would be useless and discouraging. If it tells them "your audio energy
+is low, your title lacks emotional framing and you are posting on a
+low-traffic day," those are specific, actionable improvements that any
+creator can implement before their next upload.
+
+This design philosophy, content quality over creator fame, is what
+makes this virality predictor genuinely useful rather than a channel size
+estimator in disguise.

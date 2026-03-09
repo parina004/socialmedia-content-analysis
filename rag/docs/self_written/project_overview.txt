@@ -1,0 +1,80 @@
+PROJECT OVERVIEW: ADAPTIVE AI FRAMEWORK FOR SOCIAL MEDIA ANALYSIS
+
+WHAT THIS SYSTEM DOES
+
+This system is a live deployed web application with two parallel AI tools.
+Tool one: upload any video or image and receive a forensic verdict on
+whether it is real, AI-generated, or a deepfake: with a detailed
+research-backed explanation of the specific evidence found. Tool two:
+upload any video and receive a virality score from 0 to 100 with
+specific, actionable improvement tips based on 20 engineered features.
+
+THE THREE AI PARADIGMS IN ONE SYSTEM
+
+This project is notable for combining three distinct AI paradigms within
+a single deployed application:
+
+Discriminative Deep Learning (Model A): EfficientNet-B4, a forensic CNN
+processing DCT and SRM frequency maps and a MediaPipe landmark MLP work
+in parallel to detect synthetic media. A cascaded meta-classifier combines
+their outputs.
+
+Classical Machine Learning with Engineered Features (Model B): LightGBM
+trained on 20 hand-crafted features that describe video content quality,
+audio characteristics and metadata packaging. Interpretable, fast and
+deployable on free-tier infrastructure.
+
+Generative AI with Retrieval Augmentation (LLM + RAG + Agent): LLaMA 3
+running locally via Ollama (or GPT-3.5-turbo for cloud deployment) writes
+human-readable forensic reports and virality analyses. A RAG system
+grounds every report in retrieved knowledge. A LangChain ReAct agent
+orchestrates all components with genuine reasoning rather than a
+hardcoded pipeline.
+
+THE NINE COMPONENTS
+
+1. Model A: Synthetic Media Detection: Three-stream cascade architecture
+   classifying content as Real, Deepfake, or AI-Generated.
+
+2. Model B: Virality Prediction: LightGBM classifier and regressor using
+   20 fair, content-describing features. Outputs a virality score 0-100.
+
+3. Shared Preprocessing Pipeline: Extracts frames, audio, forensic maps,
+   facial landmarks and all 20 virality features from uploaded video.
+
+4. LLM Explainability Layer: Reads numerical model outputs and writes
+   clear, structured human-readable reports using LLaMA 3 or GPT-3.5-turbo.
+
+5. RAG Knowledge Base: 50-60 documents chunked, embedded with
+   all-MiniLM-L6-v2 and stored in ChromaDB. Retrieved before every
+   LLM call to ground explanations in real technical content.
+
+6. AI Agent Orchestrator: LangChain ReAct agent with 6 tools. Reasons
+   about which tools to call and adapts based on intermediate results.
+
+7. MCP Server: Exposes the system as an MCP-compatible server, allowing
+   Claude Desktop to call the models directly via natural language.
+
+8. FastAPI Backend: Four REST endpoints coordinating all components.
+   Auto-deletes uploaded files 5 minutes after processing for privacy.
+
+9. HTML/CSS/JS Frontend: Dark-themed professional web interface deployed
+   on Netlify. Drag-and-drop upload, animated results, Chart.js
+   visualisations and LLM report display.
+
+DEPLOYMENT ARCHITECTURE
+
+Frontend: Netlify (free static hosting, global CDN)
+Backend + Models + Agent + RAG: Render.com (free Python web service)
+Model weights: HuggingFace Hub (free private repository)
+LLM in production: OpenAI GPT-3.5-turbo API (approximately $0.002/call)
+Total infrastructure cost: $0 plus minimal OpenAI API usage
+
+PRIVACY AND SECURITY
+
+Uploaded files are automatically deleted 5 minutes after processing
+using FastAPI background tasks. No video data is stored or logged.
+MIME type validation, 100MB file size limit, rate limiting at 10
+requests per minute and CORS restricted to the Netlify domain are
+all enforced at the API layer. The LLM reads numerical model outputs
+only: raw video frames never leave the local processing pipeline.
