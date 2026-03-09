@@ -1,0 +1,14 @@
+Paper Title: Multimodal Learning of Social Image Representation by Exploiting Social Relations
+Authors: Feiran Huang, Xiaoming Zhang, Jie Xu, Zhonghua Zhao, and Zhoujun Li
+Year: 2021
+
+Problem Addressed:
+Existing models often overlook the social relations among images (e.g., shared albums or groups), leading to suboptimal embeddings when only modeling content information (visual/text).
+Methodology:
+They introduced the Correlational Multimodal Variational Autoencoder via Triplet Network (CMVAE-TN). It uses a VAE to learn unified representations of visual and textual content (capturing both common and private information) and a triplet network to embed social links between images.
+Key Findings:
+The CMVAE-TN consistently outperformed competitive baselines in classification and retrieval. Incorporating link information (social relations) boosted mean average precision by 2%–5%.
+Limitations:
+While effective, the model primarily focuses on static social links rather than the dynamic, real-time behavioral features required for live "virality" predictions.
+Relevance to Our System:
+This provides a theoretical basis for your RAG system and AI Agent's reasoning. The "triplet network" concept mirrors your Model A strategy of running three parallel analysis streams—visual patterns, frequency artifacts, and facial geometry—to find forensic evidence.
