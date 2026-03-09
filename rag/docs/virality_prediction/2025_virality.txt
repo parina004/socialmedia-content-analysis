@@ -1,0 +1,14 @@
+Paper Title: Unifying View-Specific Learning and Ambiguity Awareness With Emotions for Multimodal Misinformation Detection
+Authors: Marium Malik, Yang Song, Jiaojiao Jiang, and Sanjay Jha
+Year: 2025 (Accepted October 2025; published issue 2026)
+
+1. Problem Addressed:
+Current multimodal fake news detection systems struggle with inconsistent decision-making due to ambiguity between modalities (e.g., text and images presenting conflicting information). Many models prioritize shared information fusion while neglecting view-specific data and the sentimental/emotional elements news authors use to manipulate readers.
+2. Methodology:
+The authors propose Senti View, a framework consisting of four modules:Modal-Specific Encoder: Uses BERT for text and ResNet-50 for images to generate initial embeddings.Multimodal Consistency Learning: Captures interrelationships and calculates an ambiguity score using KL divergence to measure uncertainty between modalities.View-Aware Feature Extractor: Uses an orthogonal constraint in the shared subspace to isolate unique, modality-specific discriminative details that shared subspaces often overlook.Sentiment Extractor: Employs a fine-tuned RoBERTa model to analyze the author's emotional tone (positive, negative, or neutral) and identify sensational language.
+3. Key Findings:
+Senti View outperformed state-of-the-art models on three datasets: X (93.8% accuracy), Weibo (94.5%), and GossipCop (87.3%).The model proved robust in multilingual settings, maintaining an accuracy of 85.48% on a mixed English-Chinese dataset.Qualitative analysis (t-SNE) showed that integrating sentiment and view-specific features produced much more distinct clusters for fake vs. real news compared to versions without these modules.
+4. Limitations:
+Higher Computational Cost: The model has higher training and inference times (42 ms per sample vs. 31 ms for simpler models) due to its complex architecture.Ethical Risks: Potential for false positives that could lead to censorship or unfair discrediting of legitimate news.Static Nature: The current design is for offline batch processing rather than real-time social media streams.
+5. Relevance to Our System:
+Sentiment and Emotion in Virality: Your system uses "facial emotions" and "sentiment of the title" as 2 of its 20 features. This paper provides a research-backed justification for how emotional cues are central to deceptive and viral-style content.Handling Multimodal Inconsistency: Your "Model A" runs parallel streams (visual, frequency, geometry). The ambiguity-aware mechanism in this paper offers a template for how your AI Agent can reason when your visual and facial models disagree.RAG Grounding: This paper is a prime candidate for your RAG system to help the LLM explain to users why an emotionally charged video might be flagged as fake or potentially viral.
