@@ -1,0 +1,69 @@
+WHAT ARE AI-GENERATED VIDEOS
+
+DEFINITION
+
+An AI-generated video is a sequence of frames created entirely by a
+generative AI model, typically from a text prompt (Text-to-Video, T2V)
+or from a reference image (Image-to-Video, I2V). No camera recorded
+the scene. Every frame was synthesised by a neural network.
+
+HOW TEXT-TO-VIDEO WORKS
+
+Modern T2V systems extend image diffusion models to the temporal
+dimension. The model learns not just to generate coherent single frames
+but to generate sequences of frames with consistent motion, lighting,
+and object persistence across time. Architecturally, this is achieved
+by inserting temporal attention layers into the U-Net or transformer
+backbone of an image diffusion model, allowing the model to attend
+across frames as well as across spatial positions within a frame.
+
+At inference, the model takes a text prompt and optionally a number of
+frames, frame rate and resolution. It generates all frames jointly
+(in the case of full video diffusion) or autoregressively (generating
+frames in sequence conditioned on previous frames). Motion is
+synthesised to be semantically consistent with the prompt: "a person
+walking on a beach" will have coordinated leg and arm movement: but
+the underlying physics and temporal coherence are approximations.
+
+MAJOR T2V AND I2V MODELS
+
+Sora (OpenAI): Large-scale diffusion transformer trained on video data.
+Generates up to 60 seconds of high-resolution consistent video.
+Introduced in 2024, not yet publicly available.
+
+RunwayML Gen-2 and Gen-3: Commercially available T2V and I2V model.
+Used in professional film and content creation. Supports motion brush
+and camera control.
+
+CogVideoX (Zhipu AI): Open-source T2V model, one of the datasets used
+to train this system's AI-generated video detection capability.
+
+VideoPoet (Google): Multimodal model handling T2V, I2V, video editing,
+and video-to-audio in a unified framework.
+
+AnimateDiff / BDAnimateDiffLightning: Plug-in for Stable Diffusion image
+models that adds temporal consistency for short video clips. Widely used
+for anime-style and stylised video generation.
+
+StableDiffusion Video (Stability AI): Extends Stable Diffusion to video
+via a latent diffusion approach with temporal convolutions.
+
+WHY AI-GENERATED VIDEOS ARE HARDER TO DETECT
+
+Static image detectors fail on video because each individual frame may
+look realistic when examined alone. The forensic signal in AI-generated
+video is partly temporal: subtle frame-to-frame inconsistencies in noise
+patterns, unphysical motion trajectories, temporal flickering in fine
+texture regions (hair, fabric, water) and inconsistent lighting
+direction across frames. This system extracts 1 frame per second and
+analyses frequency artifacts in each frame independently, then averages
+across frames, which is effective for detecting the per-frame generation
+signatures that persist throughout AI-generated video sequences.
+
+TRAINING DATA FOR AI VIDEO DETECTION
+
+This system was trained on the GenVideo subset of the AIGVDet dataset,
+which includes AI-generated videos from CogVideoX5B, RunwayML,
+StableDiffusion Video, VideoPoet, AnimateDiffLightning and DeepAction,
+alongside real videos sourced from Pexels. The dataset covers both
+T2V and I2V generation pipelines across multiple resolutions and styles.

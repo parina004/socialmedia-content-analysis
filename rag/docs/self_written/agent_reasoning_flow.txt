@@ -1,0 +1,64 @@
+AI AGENT ORCHESTRATION AND REASONING FLOW
+
+WHAT THE AGENT IS
+
+The AI Agent is a LangChain ReAct (Reasoning + Acting) agent that
+orchestrates all system components. Unlike a hardcoded pipeline, the
+agent reasons about which tools to call, in what order and why —
+adapting its behaviour based on intermediate results.
+
+THE 6 TOOLS
+
+1. run_synthetic_detection(video_path)
+   Runs the full Model A cascade pipeline on the uploaded file.
+   Returns: probability, label (Real/Deepfake/AI-Generated), top 5
+   most influential features from the meta-classifier.
+
+2. run_virality_prediction(video_path, title, post_hour, post_day, tag_count)
+   Runs the full Model B pipeline. Extracts all 12 video features,
+   fills in provided metadata, runs LightGBM classifier and regressor.
+   Returns: virality score 0-100, viral/not-viral label, all 20 feature
+   importance values.
+
+3. search_knowledge_base(query)
+   Converts the query to a vector using all-MiniLM-L6-v2, performs
+   cosine similarity search in ChromaDB, returns top 5 most relevant
+   chunks from the 50-60 document knowledge base.
+
+4. fetch_trending_hashtags(topic)
+   Returns current trending hashtags for a given topic. Used by the
+   LLM to comment specifically on user-provided hashtag choices.
+
+5. generate_forensic_report(model_output)
+   Internally calls search_knowledge_base with a forensic query,
+   builds the synthetic detection LLM prompt with model results and
+   RAG context, calls LLaMA 3 (or GPT-3.5-turbo fallback), returns
+   the written forensic report.
+
+6. generate_virality_report(model_output, user_caption, user_hashtags)
+   Internally calls search_knowledge_base with a virality query,
+   builds the virality analysis LLM prompt with feature scores,
+   RAG context and user-provided caption/hashtags, calls LLaMA 3,
+   returns the full written analysis.
+
+EXAMPLE REASONING PATHS
+
+Standard case (POST /analyze/both):
+→ run_synthetic_detection → run_virality_prediction →
+  search_knowledge_base (forensic) → search_knowledge_base (virality) →
+  generate_forensic_report → generate_virality_report → return combined JSON
+
+Borderline synthetic result (probability 0.55, near threshold):
+→ run_synthetic_detection [returns 0.55, borderline] →
+  Agent reasons: "This is inconclusive: I should retrieve research on
+  borderline detection cases before writing the report" →
+  search_knowledge_base("inconclusive synthetic detection threshold") →
+  generate_forensic_report with uncertainty-focused RAG context
+
+Clean result (probability 0.97, AI-Generated):
+→ run_synthetic_detection [returns 0.97, AI-Generated] →
+  search_knowledge_base("AI video generation diffusion model artifacts") →
+  generate_forensic_report with high-confidence framing
+
+The agent's ability to adapt its RAG query based on the actual result —
+not a preset query: is what distinguishes it from a hardcoded pipeline.
