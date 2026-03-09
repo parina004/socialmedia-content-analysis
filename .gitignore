@@ -54,3 +54,6 @@ model_b/metrics.txt
 model_b/feature_importance.png
 # RAG — generated vector database (rebuild with build_vectorstore.py)
 rag/chroma_db/
+
+# LLM
+llm/__init__.py
