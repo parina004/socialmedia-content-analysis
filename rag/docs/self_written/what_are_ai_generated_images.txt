@@ -1,0 +1,56 @@
+WHAT ARE AI-GENERATED IMAGES
+
+DEFINITION
+
+An AI-generated image is a visual created entirely by an artificial
+intelligence model from a text prompt, sketch, or reference image.
+No camera was used. No real scene was photographed. The pixels were
+synthesised mathematically by a neural network.
+
+TWO GENERATIONS OF GENERATORS
+
+The first major wave of AI image generation used Generative Adversarial
+Networks (GANs). A GAN consists of two competing networks: a generator
+that creates images and a discriminator that tries to detect fakes. They
+train against each other until the generator produces images the
+discriminator cannot distinguish from real ones. GANs introduced
+characteristic artifacts: checkerboard patterns from transposed
+convolutions, unnatural eye symmetry, hair blending errors and
+high-frequency noise in uniform regions. Early deepfake detection
+methods were largely trained on GAN artifacts.
+
+The second and now dominant wave uses diffusion models. Diffusion models
+work by learning to reverse a noise-addition process. During training,
+real images have random Gaussian noise progressively added until the
+image becomes pure noise. The model learns to denoise: to predict and
+remove noise step by step. At inference time, the model starts from pure
+noise and iteratively refines it into a coherent image guided by a text
+prompt. Examples include Stable Diffusion, DALL-E 3, Midjourney and
+Adobe Firefly.
+
+WHY DIFFUSION MODELS LEAVE FORENSIC TRACES
+
+Diffusion models produce characteristic frequency-domain signatures
+that differ from real camera images. Real cameras introduce optical
+lens blur, sensor noise (shot noise, read noise) and JPEG compression
+artifacts in predictable physical patterns. Diffusion models introduce
+none of these: instead they produce periodic spectral patterns from
+the denoising schedule, characteristic textures from the U-Net
+architecture's upsampling operations and uniform noise residuals
+across the entire image that do not match any physical camera model.
+
+The Discrete Cosine Transform (DCT) and Spatial Rich Model (SRM) filters
+used in this system's Stream 2 are specifically designed to reveal these
+frequency-domain differences. Real images cluster in one region of
+frequency space. AI-generated images cluster in another. This separation
+is highly consistent across different diffusion model architectures.
+
+CIFAKE AND GENIMAGE DATASETS
+
+This system's AI detection capability was trained using CIFAKE (60,000
+real images + 60,000 Stable Diffusion v1.4 generated images) and a
+subset of GenImage (images from 8 different generators including
+Midjourney, Stable Diffusion v1.4/v1.5, ADM, GLIDE, Wukong, VQDM,
+and BigGAN). Training across multiple generators prevents the model
+from learning one generator's specific artifacts and instead forces it
+to learn generator-agnostic forensic signals.

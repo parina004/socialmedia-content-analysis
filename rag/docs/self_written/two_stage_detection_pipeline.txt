@@ -1,0 +1,57 @@
+TWO-STAGE CASCADED SYNTHETIC MEDIA DETECTION PIPELINE
+
+This system uses a cascaded two-submodel architecture for synthetic media
+detection. The cascade means the two submodels run in sequence, not in
+parallel: the output of the first determines whether the second is needed.
+
+STAGE 1 - SUBMODEL 2: AI-GENERATED OR NOT
+
+Despite being called Submodel 2, this runs first in the cascade. It answers
+the question: was this video or image generated entirely by an AI system?
+
+This submodel uses two analysis streams:
+- Stream 1 (RGB Visual): EfficientNet-B4 fine-tuned on real vs AI-generated
+  content, producing a 128-dimensional feature vector.
+- Stream 2 (Forensic Frequency): DCT (Discrete Cosine Transform) analysis
+  combined with SRM (Spatial Rich Model) filters, fed into a 4-layer CNN,
+  producing a 256-dimensional feature vector.
+
+The MediaPipe facial landmark stream is deliberately excluded here because
+AI-generated content may not contain human faces at all.
+
+The 384-dimensional concatenated vector is passed to a meta-classifier.
+If the AI-generated probability exceeds the tuned threshold (AI_THRESH=0.65),
+the system returns the verdict: AI-GENERATED with confidence score. Processing
+stops here.
+
+STAGE 2 - SUBMODEL 1: DEEPFAKE OR REAL
+
+This submodel only runs if Submodel 2 determined the content is NOT
+AI-generated. It answers: is this video a deepfake (face-swapped or
+manipulated) or genuinely real?
+
+This submodel uses all three streams:
+- Stream 1 (RGB Visual): EfficientNet-B4 → 128-dim vector
+- Stream 2 (Forensic Frequency): DCT + SRM CNN → 256-dim vector
+- Stream 3 (Facial Geometry): MediaPipe 468 facial landmarks → 16 geometric
+  features → MLP → 16-dim vector. Zero vector if no face detected.
+
+The 400-dimensional concatenated vector is passed to the meta-classifier.
+If the deepfake probability exceeds the tuned threshold (DF_THRESH=0.40),
+the system returns: DEEPFAKE. Otherwise: REAL.
+
+THRESHOLD TUNING
+
+Both thresholds were tuned via grid search after submodel training,
+optimising for cascade macro F1 across all three classes. Tuned values:
+AI_THRESH=0.65, DF_THRESH=0.40. Default values (0.5 each) gave lower
+macro F1. The final system achieved Macro F1=0.9079, Real F1=0.8504,
+Deepfake F1=0.9306, AI-Generated F1=0.9426.
+
+VIDEO PROCESSING
+
+For video inputs, the system extracts 1 frame per second. All streams
+run on each frame independently. Frame-level probabilities are averaged
+to produce the final verdict. The temporal consistency of facial landmarks
+across frames (Stream 3) provides additional signal unavailable in
+single-image analysis.
