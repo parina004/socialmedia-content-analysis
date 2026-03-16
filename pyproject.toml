@@ -18,7 +18,7 @@ dependencies = [
     "tf-keras",
     "piq==0.8.0",
     ## Feature extraction — audio
-    "librosa==0.10.1",
+    "librosa>=0.10.2",
     "soundfile==0.12.1",
     ## Feature extraction — metadata
     "textblob==0.18.0",
@@ -47,6 +47,7 @@ dependencies = [
     ## RAG knowledge base
     "langchain>=0.2.0",
     "langchain-community>=0.2.0",
+    "langchain-core>=0.2.0",
     "chromadb>=0.5.0",
     "sentence-transformers>=3.0.0",
 ]
