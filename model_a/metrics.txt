@@ -1,0 +1,78 @@
+==============================================================
+MODEL A — SYNTHETIC MEDIA DETECTION — EVALUATION REPORT
+==============================================================
+
+SUBMODEL 2 — AI-Generated Detector  (binary: ai_gen vs rest)
+------------------------------------------
+  Best CV ROC-AUC : 0.9998
+  Test Accuracy   : 0.9773
+  Test Precision  : 0.9002
+  Test Recall     : 0.9821
+  Test F1         : 0.9394
+  Test ROC-AUC    : 0.9973
+
+  Confusion Matrix  (rows=actual, cols=predicted)
+                       not_ai    ai_gen
+  actual not_ai        3486        85
+  actual ai_gen        14          767
+
+              precision    recall  f1-score   support
+
+      not_ai       1.00      0.98      0.99      3571
+ai_generated       0.90      0.98      0.94       781
+
+    accuracy                           0.98      4352
+   macro avg       0.95      0.98      0.96      4352
+weighted avg       0.98      0.98      0.98      4352
+
+
+SUBMODEL 1 — Real vs Deepfake  (binary: deepfake vs real)
+------------------------------------------
+  Best CV ROC-AUC : 0.9609
+  Test Accuracy   : 0.9084
+  Test Precision  : 0.9313
+  Test Recall     : 0.9191
+  Test F1         : 0.9252
+  Test ROC-AUC    : 0.9530
+
+  Confusion Matrix  (rows=actual, cols=predicted)
+                       real      deepfake
+  actual real          1223        149
+  actual deepfake      178         2021
+
+              precision    recall  f1-score   support
+
+        real       0.87      0.89      0.88      1372
+    deepfake       0.93      0.92      0.93      2199
+
+    accuracy                           0.91      3571
+   macro avg       0.90      0.91      0.90      3571
+weighted avg       0.91      0.91      0.91      3571
+
+
+CASCADE — Full 3-Class Evaluation on Test Set
+------------------------------------------
+  Thresholds (tuned) : AI_THRESH=0.65  DF_THRESH=0.4
+  Thresholds (default): AI_THRESH=0.5  DF_THRESH=0.5
+  Accuracy         : 0.9083
+  Macro F1         : 0.9079
+  F1 (real)        : 0.8504
+  F1 (deepfake)    : 0.9306
+  F1 (ai_gen)      : 0.9426
+
+  Confusion Matrix  (rows=actual, cols=predicted: real / deepfake / ai_gen)
+  actual real        1131        165         76
+  actual deepfake    141         2058        0
+  actual ai_gen      16          1           764
+
+              precision    recall  f1-score   support
+
+        real       0.88      0.82      0.85      1372
+    deepfake       0.93      0.94      0.93      2199
+ai_generated       0.91      0.98      0.94       781
+
+    accuracy                           0.91      4352
+   macro avg       0.90      0.91      0.91      4352
+weighted avg       0.91      0.91      0.91      4352
+
+==============================================================

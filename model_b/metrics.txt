@@ -1,0 +1,44 @@
+==============================================================
+MODEL B — VIRALITY PREDICTION — EVALUATION REPORT
+==============================================================
+
+BEST HYPERPARAMETERS  (Optuna · 50 trials · 5-fold CV)
+------------------------------------------
+  n_estimators               1017
+  max_depth                  10
+  learning_rate              0.0365265
+  num_leaves                 92
+  min_child_samples          10
+  subsample                  0.647076
+  colsample_bytree           0.686791
+  reg_alpha                  0.000206898
+  reg_lambda                 0.000738562
+
+  Best CV ROC-AUC (mean) : 0.8612
+
+TEST SET METRICS
+------------------------------------------
+  Accuracy   : 0.7995
+  Precision  : 0.7200  (of predicted viral, how many truly were)
+  Recall     : 0.6545  (of all viral, how many were caught)
+  F1 Score   : 0.6857
+  ROC-AUC    : 0.8544
+
+CONFUSION MATRIX  (rows = actual, cols = predicted)
+------------------------------------------
+                predicted not_viral   predicted viral
+  actual not_viral   478                 70
+  actual viral       95                  180
+
+CLASSIFICATION REPORT
+------------------------------------------
+              precision    recall  f1-score   support
+
+   not_viral       0.83      0.87      0.85       548
+       viral       0.72      0.65      0.69       275
+
+    accuracy                           0.80       823
+   macro avg       0.78      0.76      0.77       823
+weighted avg       0.80      0.80      0.80       823
+
+==============================================================

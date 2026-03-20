@@ -1,0 +1,104 @@
+{
+  "submodel2": {
+    "accuracy": 0.9772518382352942,
+    "precision": 0.9002347417840375,
+    "recall": 0.9820742637644047,
+    "f1": 0.9393753827311696,
+    "roc_auc": 0.997307948400671,
+    "confusion_matrix": [
+      [
+        3486,
+        85
+      ],
+      [
+        14,
+        767
+      ]
+    ],
+    "best_cv_roc_auc": 0.9997563853242502,
+    "best_params": {
+      "n_estimators": 998,
+      "max_depth": 4,
+      "learning_rate": 0.07889410885807036,
+      "subsample": 0.5974669233665575,
+      "colsample_bytree": 0.8453642157130467,
+      "reg_alpha": 0.00010554753249718454,
+      "reg_lambda": 0.03401735990816561,
+      "min_child_weight": 1,
+      "scale_pos_weight": 3.9465428937259923,
+      "objective": "binary:logistic",
+      "verbosity": 0,
+      "random_state": 42,
+      "n_jobs": -1
+    },
+    "n_train": 17407,
+    "n_test": 4352,
+    "feature_dims": 2048
+  },
+  "submodel1": {
+    "accuracy": 0.9084290114813778,
+    "precision": 0.9313364055299539,
+    "recall": 0.9190541155070486,
+    "f1": 0.9251544975967041,
+    "roc_auc": 0.9530097168471754,
+    "confusion_matrix": [
+      [
+        1223,
+        149
+      ],
+      [
+        178,
+        2021
+      ]
+    ],
+    "best_cv_roc_auc": 0.9609052635097062,
+    "best_params": {
+      "n_estimators": 860,
+      "max_depth": 6,
+      "learning_rate": 0.006372646029230575,
+      "subsample": 0.579921964512053,
+      "colsample_bytree": 0.6296278878247188,
+      "reg_alpha": 0.0007145511231124406,
+      "reg_lambda": 0.5807562792961695,
+      "min_child_weight": 16,
+      "scale_pos_weight": 0.40150051153802435,
+      "objective": "binary:logistic",
+      "verbosity": 0,
+      "random_state": 42,
+      "n_jobs": -1
+    },
+    "n_train": 14283,
+    "n_test": 3571,
+    "feature_dims": 2064
+  },
+  "cascade": {
+    "cascade_accuracy": 0.9083180147058824,
+    "cascade_f1_real": 0.850375939849624,
+    "cascade_f1_deepfake": 0.930590097219082,
+    "cascade_f1_ai_generated": 0.9426280074028378,
+    "cascade_macro_f1": 0.9078646814905147,
+    "cascade_confusion_matrix": [
+      [
+        1131,
+        165,
+        76
+      ],
+      [
+        141,
+        2058,
+        0
+      ],
+      [
+        16,
+        1,
+        764
+      ]
+    ]
+  },
+  "thresholds": {
+    "ai_threshold": 0.65,
+    "df_threshold": 0.4,
+    "ai_threshold_default": 0.5,
+    "df_threshold_default": 0.5
+  }
+}
