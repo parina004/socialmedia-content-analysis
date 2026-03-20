@@ -1,0 +1,60 @@
+{
+  "accuracy": 0.7995139732685298,
+  "precision": 0.72,
+  "recall": 0.6545454545454545,
+  "f1": 0.6857142857142857,
+  "roc_auc": 0.8544193762441937,
+  "confusion_matrix": [
+    [
+      478,
+      70
+    ],
+    [
+      95,
+      180
+    ]
+  ],
+  "best_cv_roc_auc": 0.8611541327957115,
+  "best_params": {
+    "n_estimators": 1017,
+    "max_depth": 10,
+    "learning_rate": 0.03652646058407365,
+    "num_leaves": 92,
+    "min_child_samples": 10,
+    "subsample": 0.6470763925884898,
+    "colsample_bytree": 0.6867914389219598,
+    "reg_alpha": 0.00020689754314697832,
+    "reg_lambda": 0.0007385616140677549,
+    "scale_pos_weight": 1.9963556851311954,
+    "objective": "binary",
+    "verbosity": -1,
+    "random_state": 42,
+    "n_jobs": -1
+  },
+  "n_train": 3288,
+  "n_test": 823,
+  "feature_names": [
+    "brisque_score",
+    "color_vibrancy",
+    "motion_intensity",
+    "face_presence_ratio",
+    "face_emotion_joy",
+    "face_emotion_surprise",
+    "thumbnail_brightness",
+    "tempo_bpm",
+    "rms_energy",
+    "speech_ratio",
+    "zero_crossing_rate",
+    "beat_strength",
+    "title_sentiment",
+    "title_length",
+    "title_has_question",
+    "title_has_number",
+    "description_length",
+    "tag_count",
+    "upload_hour",
+    "upload_day",
+    "like_to_view_ratio",
+    "comment_to_view_ratio"
+  ]
+}
