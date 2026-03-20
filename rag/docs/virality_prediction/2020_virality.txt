@@ -1,0 +1,14 @@
+Paper Title: Online Prediction of Video Popularity in OVSs: A Video Age-Sensitive Model With Beyond Views Features
+Authors: Zhiyi Tan, Ya Zhang, Wen Hu
+Year: 2020
+
+1. Problem Addressed:
+Predicting video popularity in real-time is difficult because existing models usually rely on "early views" to predict "future views". In fast-moving Online Video Services (OVSs), by the time you have enough view data to update your model, the prediction is already outdated. This creates a "performance delay" that makes it hard to identify viral content early.
+2. Methodology:
+The authors proposed the IEVP (Infectiveness Estimation and Views Prediction) model.Average Watched Percentage (AWP): Instead of just looking at raw view counts, they used AWP—the average proportion of a video's content that users actually watch.Video Age-Sensitive Function: They discovered that the relationship between how much people watch and how many new views a video gets changes as the video gets older. They modeled this as an exponential distribution that flattens as the video ages.Infectiveness vs. Attractiveness: The model separates "attractiveness" (clicks based on title/metadata) from "infectiveness" (how likely early viewers are to influence others to watch).
+3. Key Findings:
+Predictability of Engagement: A video's average watched percentage stabilizes over time and is a much more "timely" indicator of future popularity than raw view counts.Stability: The IEVP model showed much lower performance fluctuation (only 4% error) compared to standard models like LSTM or EPBP-ML.Practicality: Because AWP data is revealed much faster than long-term view counts, the model can be updated in real-time to stay accurate.
+4. Limitations:
+Video Duration: The correlation between watched percentage and views is less reliable for very long videos (over 30 minutes).Cold-Start Sensitivity: While the model uses metadata for "background views," early-stage predictions are still more prone to error until a baseline of viewer behavior is established.
+5. Relevance to Your System:
+This paper provides the scientific backbone for your Tool Two (20-Feature Virality Model).Feature Selection: It justifies your decision to exclude raw view counts and subscriber counts. By focusing on "normalized engagement ratios," you are essentially measuring what this paper calls the "Infectiveness" of the content itself.Actionable Tips: Your LLM-generated reports can use the "Video Age-Sensitive" logic to tell users when their video is likely to peak and how to improve "infectiveness" (e.g., speech patterns or audio tempo) to keep users watching longer.
