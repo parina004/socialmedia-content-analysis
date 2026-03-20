@@ -1,0 +1,72 @@
+RAG SYSTEM DESIGN: RETRIEVAL AUGMENTED GENERATION
+
+WHAT RAG IS AND WHY IT EXISTS
+
+Retrieval Augmented Generation (RAG) is a technique that gives a language
+model access to a curated knowledge base before it generates text. Without
+RAG, a language model can only draw on what it learned during training,
+which may be outdated, incomplete, or simply hallucinated. With RAG, the
+model's response is grounded in specific retrieved documents: it cites
+real content rather than inventing plausible-sounding but false statements.
+
+In this system, RAG prevents the LLM from writing generic or fabricated
+forensic reports. Every explanation references specific technical concepts
+from the knowledge base: whether that is how diffusion model upsampling
+creates frequency artifacts, or why normalised engagement ratios are a
+fairer virality signal than raw like counts.
+
+HOW THIS SYSTEM'S RAG WORKS
+
+Step 1: Document Collection
+50 to 60 documents are stored as plain text files in the rag/docs/
+directory. These include self-written technical explanations of the
+system's own components, covering topics such as deepfake detection,
+AI-generated media, virality prediction, the 20 engineered features,
+the cascade pipeline and the agent reasoning flow.
+
+Step 2: Chunking
+Each document is split into overlapping chunks of 300 words with a
+50-word overlap between consecutive chunks. Overlap prevents a concept
+that spans a chunk boundary from being cut in half and losing context.
+Chunking is performed using LangChain's RecursiveCharacterTextSplitter.
+
+Step 3: Embedding
+Each chunk is converted into a 384-dimensional dense vector using the
+sentence-transformers/all-MiniLM-L6-v2 model. This model is free, runs
+locally on CPU and produces embeddings that capture semantic meaning —
+chunks about "frequency artifacts" and "DCT analysis" will have similar
+vectors even if they use different words.
+
+Step 4: Storage
+All chunk vectors and their original text are stored in ChromaDB, a
+local vector database, at rag/chroma_db/. This process runs once via
+build_vectorstore.py and produces a persistent index on disk.
+
+Step 5: Retrieval at Runtime
+When the agent needs context before calling the LLM, it calls
+retrieve(query, k=5). The query is embedded using the same
+all-MiniLM-L6-v2 model. ChromaDB performs cosine similarity search
+across all stored chunk vectors. The top 5 most semantically similar
+chunks are returned as a single concatenated string.
+
+Step 6: Prompt Injection
+The retrieved chunks are inserted into the LLM prompt template as the
+{rag_context} variable. The LLM reads both the model's numerical outputs
+and the research context before writing its report. This is what allows
+the LLM to write phrases like "as consistent with diffusion model
+upsampling artifacts" rather than making unsupported claims.
+
+WHY CHROMADB
+
+ChromaDB is a lightweight open-source vector database designed for local
+use. It requires no server setup, stores data as files on disk and
+integrates directly with LangChain. For a system that runs locally and
+on a free Render.com deployment, ChromaDB is the correct choice: it
+adds no infrastructure cost or complexity.
+
+WHY ALL-MINILM-L6-V2
+
+This embedding model is 80MB, runs on CPU in under 100ms per query and
+produces high-quality semantic embeddings for English technical text.
+It does not require an API key and sends no data to any external service,
+preserving the privacy-by-design principle of this system.

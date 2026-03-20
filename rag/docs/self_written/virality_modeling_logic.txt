@@ -1,0 +1,62 @@
+VIRALITY PREDICTION MODELING LOGIC
+
+WHAT VIRALITY MEANS IN THIS SYSTEM
+
+A video is labelled viral if it falls in the top 20th percentile of view
+counts within its YouTube content category. A video is labelled not-viral
+if it falls in the bottom 40th percentile. The middle 40% is discarded
+during training: these videos are ambiguous and would inject noise. This
+creates a clean binary distinction between genuinely high-performing and
+genuinely low-performing content.
+
+Critically, labelling is always within-category. A cooking video with
+300K views is viral in the cooking niche. A music video with 300K views
+is not viral in the music niche. Cross-category labelling would create
+a biased model that simply predicts category popularity, not content quality.
+
+DATASET
+
+5,000 YouTube videos were collected via the YouTube Data API v3 across
+10 categories: comedy, music, news, sports, cooking, gaming, education,
+beauty, technology and vlogs. 500 videos per category. After labelling
+and discarding the middle 40%, approximately 1,000 viral and 2,000
+not-viral videos remain. The natural 1:2 ratio reflects real-world
+distribution and is preserved intentionally.
+
+MODEL ARCHITECTURE
+
+Two LightGBM models are trained:
+
+LGBMClassifier: Predicts viral (1) or not-viral (0). Outputs a probability.
+LGBMRegressor: Predicts a continuous engagement percentile (0.0 to 1.0),
+which is multiplied by 100 to produce the Virality Score displayed to users.
+
+LightGBM was chosen for its speed, robustness to missing values, built-in
+handling of class imbalance (class_weight parameter) and interpretable
+feature importances that power the LLM explanation.
+
+TRAINING PROCEDURE
+
+Hyperparameters are tuned using Optuna with 50 trials and 5-fold
+stratified cross-validation. Final evaluation on a held-out test set
+(15% of data, stratified). Performance: CV ROC-AUC=0.8612,
+Test ROC-AUC=0.8544, Accuracy=0.7995, Viral F1=0.6857, Not-Viral F1=0.85.
+
+Best hyperparameters found: n_estimators=1017, max_depth=10,
+learning_rate=0.0365, num_leaves=92.
+
+FEATURE IMPORTANCES
+
+After training, model.feature_importances_ produces a ranked list of all
+20 features by their contribution to predictions. These importances are
+passed to the LLM to generate specific, ranked improvement suggestions.
+Features with low importance for a specific video indicate areas where
+the content is already strong. High-importance features with poor scores
+indicate priority areas for improvement.
+
+INFERENCE AT UPLOAD TIME
+
+The 12 visual and audio features are always extracted from the video file.
+The 8 metadata features are filled in from user input (planned title,
+post hour, post day, tag count) or set to dataset means if not provided.
+Only the first 60 seconds of the video are analysed for efficiency.

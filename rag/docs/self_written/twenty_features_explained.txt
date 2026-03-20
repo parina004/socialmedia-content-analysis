@@ -1,0 +1,99 @@
+THE 20 ENGINEERED FEATURES FOR VIRALITY PREDICTION
+
+This system predicts virality using exactly 20 features extracted from three
+sources: the video file itself (visual and audio) and content metadata.
+All features describe the content: none describe the creator's audience size.
+
+VISUAL FEATURES: 7 features from video frames
+
+1. BRISQUE Quality Score
+Blind/Referenceless Image Spatial Quality Evaluator. Measures perceptual
+sharpness and clarity of each frame. Sampled every 10th frame, averaged.
+Lower BRISQUE = higher visual quality. Poor quality reduces virality.
+
+2. Color Vibrancy
+Mean saturation of the S channel in HSV colour space across sampled frames.
+Higher saturation = more vivid, eye-catching visuals. Viral content tends
+to be visually bold.
+
+3. Motion Intensity
+Optical flow magnitude between consecutive grayscale frames using
+Lucas-Kanade method. Measures how much physical movement occurs. High
+motion signals energy and dynamism.
+
+4. Face Presence Ratio
+Fraction of sampled frames containing at least one detected human face,
+using MediaPipe FaceDetection. Human faces drive attention and engagement.
+
+5. Face Emotion: Joy
+Average "happy" probability from DeepFace emotion analysis across
+face-detected frames. Joy is consistently the highest-engagement emotion
+on social media.
+
+6. Face Emotion: Surprise
+Average "surprise" probability from DeepFace. Surprise is a strong
+attention-capturing emotion associated with viral content.
+
+7. Thumbnail Brightness
+Mean pixel intensity of the first frame (the de facto thumbnail).
+Bright thumbnails perform better in feed environments where content
+competes for visual attention.
+
+AUDIO FEATURES: 5 features from audio track
+
+8. Tempo BPM
+Beat rate extracted via librosa.beat.tempo(). Fast-paced audio creates
+energy and keeps viewers engaged.
+
+9. RMS Energy
+Root Mean Square energy: measures loudness and punchiness. Higher RMS
+signals a more impactful, professional audio mix.
+
+10. Speech Ratio
+Proportion of audio frames classified as voiced speech using WebRTC VAD
+in 30ms windows. High speech ratio indicates direct creator communication.
+
+11. Zero Crossing Rate
+Rate at which the audio signal crosses zero amplitude. Distinguishes
+noisy/percussive audio (high ZCR) from smooth/tonal audio (low ZCR).
+
+12. Beat Strength
+Mean onset strength from librosa.onset.onset_strength(). Measures how
+hard and defined each beat hits: stronger beats drive emotional response.
+
+METADATA FEATURES: 8 features from content description
+
+13. Title Sentiment Score
+VADER compound sentiment of the title, range -1 to +1. Emotional titles
+outperform neutral ones.
+
+14. Title Length
+Word count of the title. Optimal range differs by platform.
+
+15. Title Has Question Mark
+Binary. Question-format titles invite curiosity and click-through.
+
+16. Title Has Number
+Binary. Numbered titles (e.g., "5 Ways to...") signal structured,
+digestible content.
+
+17. Description Length
+Word count of the description. Longer descriptions signal professionalism
+and help with discoverability.
+
+18. Tag Count
+Number of tags/hashtags. Tag strategy affects algorithmic reach.
+
+19. Upload Hour
+Hour of day (0-23) when posted. Platform algorithms favour content
+posted during peak active hours.
+
+20. Upload Day of Week
+Day (0=Monday, 6=Sunday). Weekend vs weekday performance varies by category.
+
+ENGAGEMENT RATIOS: included in the 20, computed from collected data
+
+Like-to-View Ratio and Comment-to-View Ratio are derived from YouTube
+data at training time. At inference, if no engagement data is available,
+these are set to the dataset category mean. LightGBM handles missing
+values gracefully.

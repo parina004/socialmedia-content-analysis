@@ -1,0 +1,14 @@
+Paper Title: Collaborative Diffusion Model of Information and Behavior in Social Networks
+Authors: Qingsong Sun, Yang Wang, Gang Sun, and Haibo Hu
+Year: 2023
+
+1. Problem Addressed:
+The paper explores the "collaborative diffusion" of information and behavior, investigating how the spread of information content (e.g., product marketing or rumors) directly correlates with and influences the adoption of specific behaviors (e.g., purchasing or irrational actions) within the same social network.
+2. Methodology:
+The researchers developed a model dividing user states into six categories based on whether they know/spread information and whether they have taken action ($I_U$, $S_U$, $R_U$, $I_B$, $S_B$, $R_B$). They utilized Barabási-Albert (BA) and Watts-Strogatz (WS) virtual networks and Matlab simulations to analyze how different parameters and initial node selections affect the diffusion process.
+3. Key Findings:
+Choosing different initial nodes for information spreading and behavior adoption is more effective for overall behavior diffusion than using the same node for both.The proportion of users taking action is primarily driven by the probability of transition from "not taking action" to "taking action" ($\theta$), rather than just knowing the information.Behavior spreads more effectively in uniform networks compared to non-uniform ones.
+4. Limitations:
+The study does not account for the cost factors of users taking behaviors, nor does it consider the time difference (latency) between a user receiving information and actually performing the behavior.
+5. Relevance to Your System:
+This paper is highly relevant to your 20-feature Virality Model. While your model focuses on content features, this research provides the theoretical grounding for the "Behavioral" aspect of virality. It validates your decision to include normalized engagement ratios (likes/comments divided by views) as these reflect the behavior diffusion ($\theta$) discussed in the paper. The finding that information spreading and behavior adoption are distinct processes supports your exclusion of raw view counts in favor of content-centric features.

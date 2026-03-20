@@ -1,0 +1,14 @@
+Paper Title: Multimodal Deep Learning Framework for Image Popularity Prediction on Social Media
+Authors: Fatma S. Abousaleh, Wen-Huang Cheng, Neng-Hao Yu, and Yu Tsao
+Year: 2021
+
+Problem Addressed:
+The difficulty of accurately predicting image popularity due to the complex interplay of multimodal factors, including visual content, aesthetic quality, user context, and post metadata.
+Methodology:
+The authors proposed the Visual-Social CNN (VSCNN), which utilizes two separate 1-D CNNs to extract high-level representations from visual and social features independently. These outputs are then merged via a late fusion scheme into a joint network to estimate a popularity score.
+Key Findings:
+VSCNN outperformed state-of-the-art models, showing that social features (especially user identity and average views) are generally more predictive than visual features. However, combining both modalities significantly improved performance over using either alone.
+Limitations:
+The model struggles with outliers, specifically images with extremely high view counts, due to a nonuniform distribution and limited training samples for such "viral" cases.
+Relevance to Our System:
+This paper directly supports Tool Two of your application. It validates your use of 20 features (visual and metadata) and reinforces your decision to use LightGBM (similar to the GBDT baseline they tested) for regression. Their proof that late fusion is superior to early fusion justifies your parallel analysis streams.

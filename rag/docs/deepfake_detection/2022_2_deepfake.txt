@@ -1,0 +1,14 @@
+Paper Title: Content-Aware Detection of Temporal Metadata Manipulation 
+Authors: Rafael Padilha, Tawfiq Salem, Scott Workman, Fernanda A. Andaló, Anderson Rocha, and Nathan Jacobs 
+Year: 2022 
+
+1. Problem Addressed: 
+The paper addresses the problem of detecting timestamp manipulation in outdoor images. It aims to verify if the alleged time of capture (metadata) is consistent with the actual visual content and geographic location of the image to prevent the spread of misinformation.
+2. Methodology: 
+The authors propose an end-to-end CNN-based approach that analyzes a ground-level image, alleged timestamp, and geographic coordinates. The system uses a multi-task loss function to verify consistency while simultaneously estimating transient attributes (weather, lighting, etc.). It optionally incorporates satellite imagery to provide scene context.
+3. Key Findings: 
+The approach increased classification accuracy from 59.0% to 81.1% over previous methods. Including geographical coordinates significantly improved results because the model learns how latitude/longitude correlate with sunlight and seasonal patterns.
+4. Limitations: 
+The system struggles with "subtle" manipulations (shifts of only 1 hour or 1 month), which were detected in less than 20% of cases. It is also sensitive to noisy or inaccurate GPS location data, which can lead to false tampering verdicts.
+5. Relevance to Our System: 
+This research directly supports Tool One of your application. While your system focuses on deepfakes, this paper provides a framework for forensic explanations. By adopting their "transient attribute" method, your RAG system can explain why a video is flagged as fake (e.g., "The lighting geometry at the alleged 2 PM capture time is inconsistent with the predicted sun position for this location").

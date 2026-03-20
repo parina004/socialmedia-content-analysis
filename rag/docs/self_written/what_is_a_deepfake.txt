@@ -1,0 +1,48 @@
+WHAT IS A DEEPFAKE AND AI-GENERATED MEDIA
+
+Synthetic media refers to any video, image, or audio that has been created or
+manipulated using artificial intelligence. There are two distinct categories
+that this system detects: deepfakes and AI-generated media.
+
+A deepfake is a video in which a real person's face has been replaced or
+manipulated using deep learning techniques. The word "deepfake" combines
+"deep learning" and "fake." The manipulation is performed on an existing real
+video: a source face is swapped onto a target body, or facial expressions
+and lip movements are altered to make someone appear to say or do something
+they never did. Deepfakes are identity-based attacks: they require a real
+person as their target.
+
+AI-generated media, by contrast, is content that was created entirely from
+scratch by a generative AI system. No real person's face was stolen or
+manipulated. Instead, a model such as Stable Diffusion, RunwayML, CogVideoX,
+or VideoPoet generated the entire video or image from a text prompt or seed
+image. These videos may look photorealistic but contain no real individual.
+
+WHY THE DISTINCTION MATTERS
+
+Deepfakes and AI-generated media leave different forensic traces.
+Deepfakes often show spatial inconsistencies around the face boundary,
+flickering landmarks across frames and blending artifacts where the
+replaced face meets the original neck or hair. AI-generated videos
+show different patterns: global frequency signatures from diffusion
+model upsampling, characteristic noise textures across the entire frame,
+and spatial coherence inconsistencies that affect the whole image rather
+than just the face region.
+
+A single classifier treating both as identical "fake" would miss these
+structural differences. This system uses a cascaded two-stage pipeline
+specifically designed to handle both types correctly.
+
+THE CASCADE LOGIC
+
+The system first asks: is this AI-generated? If yes, it stops there and
+labels the content as AI-Generated with a confidence score. Only if the
+content is not AI-generated does the system proceed to ask: is this a
+deepfake or a real video? This ordering is intentional. AI-generated
+content is the harder and more novel problem. Running it first prevents
+the deepfake detector from being confused by content patterns it was
+not designed to handle.
+
+This system was trained on FaceForensics++, DFDC, Celeb-DF v2 for
+deepfake detection and GenVideo (including CogVideoX5B, RunwayML,
+StableDiffusion, VideoPoet, AnimateDiff) for AI-generated video detection.
