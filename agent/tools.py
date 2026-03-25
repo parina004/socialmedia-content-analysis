@@ -47,6 +47,7 @@ def run_virality_prediction(input_json: str) -> str:
     post_day (0-6 where 0=Monday), tag_count.
     Returns: JSON string with virality score, label, probability, and all features.
     """
+    input_json = input_json.strip().strip("'\"")
     data   = json.loads(input_json)
     result = model_b_inference.predict(
         video_path = Path(data["video_path"]),
@@ -143,11 +144,18 @@ def generate_forensic_report(detection_result: str) -> str:
     Input: the full output string from run_synthetic_detection.
     Returns: a written forensic report in clear prose.
     """
-    parts      = dict(item.split(": ") for item in detection_result.split(" | "))
-    label      = parts.get("Label", "Unknown")
-    confidence = float(parts.get("Confidence", 0.5))
-    prob_ai    = float(parts.get("AI-prob", 0.0))
-    prob_df    = float(parts.get("Deepfake-prob", 0.0))
+    try:
+        parsed     = json.loads(detection_result.strip().strip("'\""))
+        label      = parsed.get("Label", "Unknown")
+        confidence = float(parsed.get("Confidence", 0.5))
+        prob_ai    = float(parsed.get("AI-prob", 0.0))
+        prob_df    = float(parsed.get("Deepfake-prob", 0.0))
+    except (json.JSONDecodeError, ValueError):
+        parts      = dict(item.split(": ") for item in detection_result.split(" | "))
+        label      = parts.get("Label", "Unknown")
+        confidence = float(parts.get("Confidence", 0.5))
+        prob_ai    = float(parts.get("AI-prob", 0.0))
+        prob_df    = float(parts.get("Deepfake-prob", 0.0))
 
     ## Adapt the RAG query based on what the model actually found
     if label == "AI-Generated":
@@ -184,6 +192,7 @@ def generate_virality_report(input_json: str) -> str:
     from run_virality_prediction), user_caption, user_hashtags.
     Returns: a written virality analysis report with specific improvement tips.
     """
+    input_json = input_json.strip().strip("'\"")        
     data            = json.loads(input_json)
     virality_result = json.loads(data["virality_result"])
     user_caption    = data.get("user_caption", "")
