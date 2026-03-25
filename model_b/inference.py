@@ -65,10 +65,11 @@ def predict(video_path: Path, title: str, post_hour: int, post_day: int, tag_cou
     top5 = sorted(importances.items(), key=lambda x: x[1], reverse=True)[:5]
 
     return {
-        "virality_score": virality_score,
-        "label": "Viral" if prob >= 0.5 else "Not Viral",
-        "probability": round(prob, 4),
-        "top_features": {k: round(float(v), 4) for k, v in top5},
+        "virality_score": round(prob * 100),
+        "label":          "Viral" if prob >= 0.5 else "Not Viral",
+        "probability":    round(prob, 4),
+        "top_features":   {k: round(float(v), 4) for k, v in top5},
+        "features":       all_features,
     }
 
 #standalone test
