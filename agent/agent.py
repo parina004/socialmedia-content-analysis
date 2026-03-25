@@ -11,7 +11,7 @@ from langchain.agents import create_react_agent, AgentExecutor
 from langchain.prompts import PromptTemplate
 from langchain_community.llms import Ollama
 
-from agent.tools import (
+from tools import (
     run_synthetic_detection,
     run_virality_prediction,
     search_knowledge_base,
@@ -98,15 +98,29 @@ def run_analysis(
         f"- User caption: {user_caption or 'Not provided'}\n"
         f"- User hashtags: {user_hashtags or 'Not provided'}\n"
         f"- Topic: {topic}\n\n"
-        f"Steps to complete:\n"
+        f"You must complete ALL of the following steps before giving a Final Answer:\n"
         f"1. Run synthetic detection on the video\n"
         f"2. Run virality prediction on the video\n"
         f"3. Fetch trending hashtags for the topic\n"
-        f"4. Generate the forensic report\n"
-        f"5. Generate the virality report\n"
+        f"4. Generate the forensic report using the detection result from step 1\n"
+        f"5. Generate the virality report using the prediction result from step 2\n"
+        f"Do not give a Final Answer until all 5 steps are complete.\n"
     )
 
     result = executor.invoke({"input": request})
     return result["output"]
 
 
+if __name__ == "__main__":
+    output = run_analysis(
+        video_path    = r"C:\Users\parin\Downloads\test2.mp4",
+        title         = "Test Video Title",
+        post_hour     = 15,
+        post_day      = 2,
+        tag_count     = 5,
+        user_caption  = "Check out this amazing video!",
+        user_hashtags = "#test #video",
+        topic         = "general",
+    )
+    print("\n=== FINAL OUTPUT ===")
+    print(output)
