@@ -12,6 +12,7 @@ dependencies = [
     "google-api-python-client==2.118.0",
     "python-dotenv==1.0.1",
     ## Feature extraction — visual
+    "onnxruntime>=1.16.0,<1.20.0",
     "opencv-python==4.9.0.80",
     "mediapipe==0.10.9",
     "deepface==0.0.93",
@@ -50,3 +51,8 @@ dependencies = [
     "chromadb>=0.5.0",
     "sentence-transformers>=3.0.0",
 ]
+
+[tool.uv]
+  override-dependencies = [
+      "tensorflow-io-gcs-filesystem; sys_platform != 'win32'",
+  ]
