@@ -194,7 +194,8 @@ def generate_virality_report(input_json: str) -> str:
     """
     input_json = input_json.strip().strip("'\"")        
     data            = json.loads(input_json)
-    virality_result = json.loads(data["virality_result"])
+    vr = data["virality_result"]
+    virality_result = vr if isinstance(vr, dict) else json.loads(vr)
     user_caption    = data.get("user_caption", "")
     user_hashtags   = data.get("user_hashtags", "")
 

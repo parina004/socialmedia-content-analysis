@@ -4,17 +4,20 @@
                                                                                                             
 import sys
 from pathlib import Path
+from dotenv import load_dotenv
+
+load_dotenv()
 
 sys.path.append(str(Path(__file__).parent.parent))
 
 from langchain.agents import create_react_agent, AgentExecutor
 from langchain.prompts import PromptTemplate
-from langchain_community.llms import Ollama
+from langchain_groq import ChatGroq
 
 from tools import (
     run_synthetic_detection,
     run_virality_prediction,
-    search_knowledge_base,
+    search_knowledge_base, 
     fetch_trending_hashtags,
     generate_forensic_report,
     generate_virality_report,
@@ -61,7 +64,7 @@ Request: {input}
 
 
 def build_agent() -> AgentExecutor:
-    llm = Ollama(model="llama3")
+    llm = ChatGroq(model = "llama-3.3-70b-versatile",temperature = 0)
 
     agent = create_react_agent(
         llm    = llm,

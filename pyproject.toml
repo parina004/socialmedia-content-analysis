@@ -52,6 +52,7 @@ dependencies = [
     "sentence-transformers>=3.0.0",
     "tensorflow>=2.8.0,<=2.10.1",
     "protobuf>=3.20.0,<4.0.0",
+    "langchain-groq>=0.3.8",
 ]
 
 [tool.uv]
