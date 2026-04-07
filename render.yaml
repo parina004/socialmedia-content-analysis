@@ -2,6 +2,7 @@ services:
   - type: web
     name: socialmedia-api
     runtime: python
+    pythonVersion: "3.10.12"
     plan: free
     buildCommand: pip install -r requirements.txt
     startCommand: uvicorn api.main:app --host 0.0.0.0 --port $PORT
