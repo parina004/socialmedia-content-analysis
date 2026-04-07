@@ -1,7 +1,40 @@
-torch==2.1.0
-torchvision==0.16.0
-torchaudio==2.1.0
+# Production API dependencies — Render (Linux, CPU-only)
+# Training-time tools (kaggle, yt-dlp, optuna, datasets) are excluded.
 
-## YouTube dataset collection
-google-api-python-client==2.118.0
-python-dotenv==1.0.1
+# ── API server ────────────────────────────────────────────────────────────────
+fastapi>=0.100.0
+uvicorn[standard]>=0.23.0
+python-multipart>=0.0.6
+slowapi>=0.1.9
+python-dotenv>=1.0.0
+httpx>=0.24.0
+
+# ── Numerical ─────────────────────────────────────────────────────────────────
+numpy>=1.24.0,<2.0
+scipy>=1.12.0
+
+# ── Model A — Synthetic Detection ─────────────────────────────────────────────
+--extra-index-url https://download.pytorch.org/whl/cpu
+torch>=2.1.0
+torchvision>=0.16.0
+timm>=0.9.0
+xgboost>=2.0.0
+mediapipe>=0.10.9,<0.11.0
+opencv-python-headless>=4.9.0
+
+# ── Model B — Virality Prediction ─────────────────────────────────────────────
+lightgbm>=4.0.0
+librosa>=0.10.0
+soundfile>=0.12.0
+deepface>=0.0.93
+tf-keras
+piq>=0.8.0
+textblob>=0.18.0
+
+# ── LLM + RAG ─────────────────────────────────────────────────────────────────
+groq>=0.9.0
+langchain>=0.2.0
+langchain-community>=0.2.0
+langchain-groq>=0.3.0
+chromadb>=0.5.0
+sentence-transformers>=3.0.0
