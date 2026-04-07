@@ -1,0 +1,459 @@
+/* page.css — styles shared across synthetic.html and virality.html */
+
+/* ── Page base ────────────────────────────────────────────────────────────── */
+
+.page-body {
+  background: #0a0a0a;
+  min-height: 100vh;
+}
+
+/* Prevent CSS display properties from overriding the HTML hidden attribute */
+[hidden] { display: none !important; }
+
+/* ── Nav ──────────────────────────────────────────────────────────────────── */
+
+.nav {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 2rem;
+  background: rgba(0, 0, 0, 0.85);
+  border-bottom: 1px solid rgba(230, 48, 48, 0.2);
+  backdrop-filter: blur(10px);
+}
+
+.nav-logo {
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: var(--red);
+  letter-spacing: 0.04em;
+}
+
+.nav-links {
+  display: flex;
+  gap: 2rem;
+}
+
+.nav-link {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--grey);
+  transition: color 0.15s;
+}
+
+.nav-link:hover,
+.nav-link.active {
+  color: var(--red);
+}
+
+/* ── Page layout ──────────────────────────────────────────────────────────── */
+
+.page-main {
+  max-width: 680px;
+  margin: 0 auto;
+  padding: 3rem 1.5rem 4rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.page-header {
+  text-align: center;
+  margin-bottom: 0.5rem;
+}
+
+.page-title {
+  font-size: clamp(1.8rem, 4vw, 2.8rem);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--white);
+}
+
+.page-sub {
+  margin-top: 0.5rem;
+  color: var(--grey);
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+
+/* ── Card ─────────────────────────────────────────────────────────────────── */
+
+.card {
+  background: #111111;
+  border: 1px solid rgba(230, 48, 48, 0.15);
+  border-radius: 10px;
+  padding: 2.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.75rem;
+}
+
+/* ── Upload zone ──────────────────────────────────────────────────────────── */
+
+#virality-form {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.upload-zone {
+  border: 2px dashed rgba(230, 48, 48, 0.35);
+  border-radius: 8px;
+  padding: 2.5rem 1.5rem;
+  text-align: center;
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.upload-zone:hover,
+.upload-zone.drag-over {
+  border-color: var(--red);
+  background: rgba(230, 48, 48, 0.05);
+}
+
+.upload-zone.has-file {
+  border-color: var(--red);
+  border-style: solid;
+}
+
+.upload-icon {
+  font-size: 2rem;
+  color: var(--red);
+  opacity: 0.7;
+}
+
+.upload-label {
+  color: var(--grey);
+  font-size: 0.9rem;
+}
+
+.upload-hint {
+  font-size: 0.78rem;
+  color: rgba(255, 255, 255, 0.3);
+}
+
+.upload-filename {
+  font-size: 0.82rem;
+  color: var(--red);
+  font-weight: 600;
+  min-height: 1em;
+}
+
+.link {
+  cursor: pointer;
+}
+
+/* ── Full-width button ────────────────────────────────────────────────────── */
+
+.btn-full {
+  width: 100%;
+  justify-content: center;
+  padding: 0.85rem;
+  font-size: 1rem;
+}
+
+.btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* ── Result card ──────────────────────────────────────────────────────────── */
+
+.result-card {
+  gap: 1.5rem;
+}
+
+.result-verdict {
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: var(--red);
+  letter-spacing: -0.01em;
+}
+
+.result-confidence {
+  font-size: 0.88rem;
+  color: var(--grey);
+  margin-top: 0.2rem;
+}
+
+/* ── Probability bars (synthetic page) ───────────────────────────────────── */
+
+.prob-bars {
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+  margin-top: 0.5rem;
+}
+
+.prob-row {
+  display: grid;
+  grid-template-columns: 110px 1fr 48px;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.prob-label {
+  font-size: 0.82rem;
+  color: var(--grey);
+}
+
+.prob-track {
+  height: 6px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 99px;
+  overflow: hidden;
+}
+
+.prob-fill {
+  height: 100%;
+  background: var(--red);
+  border-radius: 99px;
+  width: 0%;
+  transition: width 0.6s ease;
+}
+
+.prob-fill-real {
+  background: #4ade80;  /* green for Real */
+}
+
+.prob-pct {
+  font-size: 0.82rem;
+  color: var(--white);
+  text-align: right;
+}
+
+/* ── Score ring (virality page) ───────────────────────────────────────────── */
+
+.result-score-wrap {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+}
+
+.score-ring {
+  position: relative;
+  width: 120px;
+  height: 120px;
+  flex-shrink: 0;
+}
+
+.score-svg {
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+}
+
+.ring-track {
+  fill: none;
+  stroke: rgba(255, 255, 255, 0.07);
+  stroke-width: 8;
+}
+
+.ring-fill {
+  fill: none;
+  stroke: var(--red);
+  stroke-width: 8;
+  stroke-linecap: round;
+  transition: stroke-dashoffset 0.8s ease;
+}
+
+.score-inner {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+
+.score-number {
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: var(--red);
+}
+
+.score-unit {
+  font-size: 0.7rem;
+  color: var(--grey);
+  margin-top: 0.2rem;
+}
+
+.score-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+/* ── Feature bars (virality page) ────────────────────────────────────────── */
+
+.features-section {
+  margin-top: 0.5rem;
+}
+
+.features-title {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--grey);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-bottom: 0.9rem;
+}
+
+.feat-row {
+  display: grid;
+  grid-template-columns: 160px 1fr 52px;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
+.feat-label {
+  font-size: 0.8rem;
+  color: var(--grey);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.feat-track {
+  height: 5px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 99px;
+  overflow: hidden;
+}
+
+.feat-fill {
+  height: 100%;
+  background: var(--red);
+  border-radius: 99px;
+  width: 0%;
+  transition: width 0.6s ease;
+}
+
+.feat-val {
+  font-size: 0.78rem;
+  color: var(--white);
+  text-align: right;
+}
+
+/* ── Form fields (virality page) ─────────────────────────────────────────── */
+
+.fields {
+  display: flex;
+  flex-direction: column;
+  gap: 1.4rem;
+}
+
+.field-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.25rem;
+}
+
+.field-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+}
+
+.field-label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--grey);
+  letter-spacing: 0.04em;
+}
+
+.field-optional {
+  font-weight: 400;
+  opacity: 0.6;
+}
+
+.field-input {
+  background: #1a1a1a;
+  border: 1px solid rgba(230, 48, 48, 0.2);
+  border-radius: 6px;
+  color: var(--white);
+  font-size: 0.9rem;
+  padding: 0.7rem 0.9rem;
+  width: 100%;
+  outline: none;
+  transition: border-color 0.15s;
+  font-family: var(--font);
+}
+
+.field-input:focus {
+  border-color: var(--red);
+}
+
+select.field-input option {
+  background: #1a1a1a;
+}
+
+/* ── Loading ──────────────────────────────────────────────────────────────── */
+
+.loading {
+  text-align: center;
+  color: var(--grey);
+  font-size: 0.9rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem;
+}
+
+.spinner {
+  width: 32px;
+  height: 32px;
+  border: 3px solid rgba(230, 48, 48, 0.2);
+  border-top-color: var(--red);
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ── Error box ────────────────────────────────────────────────────────────── */
+
+.error-box {
+  background: rgba(230, 48, 48, 0.08);
+  border: 1px solid rgba(230, 48, 48, 0.4);
+  border-radius: 8px;
+  color: var(--red);
+  font-size: 0.88rem;
+  padding: 1rem 1.25rem;
+  line-height: 1.5;
+}
+
+/* ── Responsive ───────────────────────────────────────────────────────────── */
+
+@media (max-width: 480px) {
+  .field-row {
+    grid-template-columns: 1fr;
+  }
+
+  .prob-row {
+    grid-template-columns: 90px 1fr 40px;
+  }
+
+  .result-score-wrap {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .nav-links {
+    gap: 1rem;
+  }
+}
