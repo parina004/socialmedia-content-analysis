@@ -68,6 +68,16 @@
             </div>
           </div>
 
+          <div class="field-group">
+            <label class="field-label" for="caption">Caption <span class="field-optional">(optional)</span></label>
+            <input class="field-input" type="text" id="caption" name="user_caption" placeholder="Your planned caption or description" />
+          </div>
+
+          <div class="field-group">
+            <label class="field-label" for="hashtags">Hashtags <span class="field-optional">(optional)</span></label>
+            <input class="field-input" type="text" id="hashtags" name="user_hashtags" placeholder="#viral #trending #fyp" />
+          </div>
+
         </div>
 
         <button type="submit" class="btn btn-primary btn-full" id="submit-btn" disabled>
@@ -98,6 +108,9 @@
           <div class="result-confidence" id="result-confidence"></div>
         </div>
       </div>
+
+      <!-- LLM explanation -->
+      <div class="explanation" id="explanation"></div>
 
       <!-- Top 5 feature importances -->
       <div class="features-section">

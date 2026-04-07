@@ -87,6 +87,15 @@ function renderResult(data) {
   setBar('bar-df',   'pct-df',   probDF);
   setBar('bar-real', 'pct-real', probReal);
 
+  // LLM explanation
+  const expEl = document.getElementById('explanation');
+  if (data.explanation) {
+    expEl.textContent = data.explanation;
+    expEl.hidden = false;
+  } else {
+    expEl.hidden = true;
+  }
+
   resultCard.hidden = false;
 }
 
