@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Synthetic Detection — SynthSenses</title>
+  <link rel="stylesheet" href="../css/style.css" />
+  <link rel="stylesheet" href="../css/page.css" />
+</head>
+<body class="page-body">
+
+  <!-- Top nav -->
+  <nav class="nav">
+    <a href="../index.html" class="nav-logo">SynthSenses</a>
+    <div class="nav-links">
+      <a href="synthetic.html" class="nav-link active">Synthetic Detection</a>
+      <a href="virality.html"  class="nav-link">Virality Prediction</a>
+    </div>
+  </nav>
+
+  <main class="page-main">
+
+    <div class="page-header">
+      <h1 class="page-title">Synthetic <span class="accent">Detection</span></h1>
+      <p class="page-sub">Upload a video to determine whether it is Real, a Deepfake or AI-Generated.</p>
+    </div>
+
+    <!-- Upload card -->
+    <div class="card">
+      <form id="synthetic-form" enctype="multipart/form-data">
+
+        <div class="upload-zone" id="upload-zone">
+          <input type="file" id="video-input" name="video" accept="video/*" hidden />
+          <div class="upload-icon">&#9654;</div>
+          <p class="upload-label">Drop your video here or <span class="accent link" id="browse-btn">browse</span></p>
+          <p class="upload-hint">MP4, MOV, AVI, WEBM up to 100 MB</p>
+          <p class="upload-filename" id="upload-filename"></p>
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-full" id="submit-btn" disabled>
+          Run Detection
+        </button>
+
+      </form>
+    </div>
+
+    <!-- Result card — hidden until response arrives -->
+    <div class="card result-card" id="result-card" hidden>
+
+      <div class="result-verdict" id="result-verdict"></div>
+      <div class="result-confidence" id="result-confidence"></div>
+
+      <!-- Probability bars -->
+      <div class="prob-bars">
+        <div class="prob-row">
+          <span class="prob-label">AI-Generated</span>
+          <div class="prob-track">
+            <div class="prob-fill" id="bar-ai"></div>
+          </div>
+          <span class="prob-pct" id="pct-ai"></span>
+        </div>
+        <div class="prob-row">
+          <span class="prob-label">Deepfake</span>
+          <div class="prob-track">
+            <div class="prob-fill" id="bar-df"></div>
+          </div>
+          <span class="prob-pct" id="pct-df"></span>
+        </div>
+        <div class="prob-row">
+          <span class="prob-label">Real</span>
+          <div class="prob-track">
+            <div class="prob-fill prob-fill-real" id="bar-real"></div>
+          </div>
+          <span class="prob-pct" id="pct-real"></span>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Error message -->
+    <div class="error-box" id="error-box" hidden></div>
+
+    <!-- Loading state -->
+    <div class="loading" id="loading" hidden>
+      <div class="spinner"></div>
+      <p>Analysing video...</p>
+    </div>
+
+  </main>
+
+  <script src="../js/api.js"></script>
+  <script src="../js/synthetic.js"></script>
+</body>
+</html>

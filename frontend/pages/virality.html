@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Virality Prediction — SynthSenses</title>
+  <link rel="stylesheet" href="../css/style.css" />
+  <link rel="stylesheet" href="../css/page.css" />
+</head>
+<body class="page-body">
+
+  <!-- Top nav -->
+  <nav class="nav">
+    <a href="../index.html" class="nav-logo">SynthSenses</a>
+    <div class="nav-links">
+      <a href="synthetic.html" class="nav-link">Synthetic Detection</a>
+      <a href="virality.html"  class="nav-link active">Virality Prediction</a>
+    </div>
+  </nav>
+
+  <main class="page-main">
+
+    <div class="page-header">
+      <h1 class="page-title">Virality <span class="accent">Prediction</span></h1>
+      <p class="page-sub">Upload a video and fill in the optional metadata to get your virality score.</p>
+    </div>
+
+    <!-- Upload + metadata card -->
+    <div class="card">
+      <form id="virality-form" enctype="multipart/form-data">
+
+        <div class="upload-zone" id="upload-zone">
+          <input type="file" id="video-input" name="video" accept="video/*" hidden />
+          <div class="upload-icon">&#9654;</div>
+          <p class="upload-label">Drop your video here or <span class="accent link" id="browse-btn">browse</span></p>
+          <p class="upload-hint">MP4, MOV, AVI, WEBM up to 100 MB</p>
+          <p class="upload-filename" id="upload-filename"></p>
+        </div>
+
+        <!-- Optional metadata fields -->
+        <div class="fields">
+
+          <div class="field-group">
+            <label class="field-label" for="title">Video Title <span class="field-optional">(optional)</span></label>
+            <input class="field-input" type="text" id="title" name="title" placeholder="Enter your planned title" />
+          </div>
+
+          <div class="field-row">
+            <div class="field-group">
+              <label class="field-label" for="post-hour">Post Hour <span class="field-optional">(0 to 23)</span></label>
+              <input class="field-input" type="number" id="post-hour" name="post_hour" min="0" max="23" value="12" />
+            </div>
+            <div class="field-group">
+              <label class="field-label" for="post-day">Post Day</label>
+              <select class="field-input" id="post-day" name="post_day">
+                <option value="0">Monday</option>
+                <option value="1" selected>Tuesday</option>
+                <option value="2">Wednesday</option>
+                <option value="3">Thursday</option>
+                <option value="4">Friday</option>
+                <option value="5">Saturday</option>
+                <option value="6">Sunday</option>
+              </select>
+            </div>
+            <div class="field-group">
+              <label class="field-label" for="tag-count">Tag Count</label>
+              <input class="field-input" type="number" id="tag-count" name="tag_count" min="0" value="5" />
+            </div>
+          </div>
+
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-full" id="submit-btn" disabled>
+          Predict Virality
+        </button>
+
+      </form>
+    </div>
+
+    <!-- Result card — hidden until response arrives -->
+    <div class="card result-card" id="result-card" hidden>
+
+      <div class="result-score-wrap">
+        <div class="score-ring">
+          <svg viewBox="0 0 120 120" class="score-svg">
+            <circle class="ring-track" cx="60" cy="60" r="50" />
+            <circle class="ring-fill" id="ring-fill" cx="60" cy="60" r="50"
+              stroke-dasharray="314"
+              stroke-dashoffset="314" />
+          </svg>
+          <div class="score-inner">
+            <span class="score-number" id="score-number">0</span>
+            <span class="score-unit">/ 100</span>
+          </div>
+        </div>
+        <div class="score-meta">
+          <div class="result-verdict" id="result-verdict"></div>
+          <div class="result-confidence" id="result-confidence"></div>
+        </div>
+      </div>
+
+      <!-- Top 5 feature importances -->
+      <div class="features-section">
+        <p class="features-title">Top Influencing Features</p>
+        <div id="feature-bars"></div>
+      </div>
+
+    </div>
+
+    <!-- Error message -->
+    <div class="error-box" id="error-box" hidden></div>
+
+    <!-- Loading state -->
+    <div class="loading" id="loading" hidden>
+      <div class="spinner"></div>
+      <p>Analysing video...</p>
+    </div>
+
+  </main>
+
+  <script src="../js/api.js"></script>
+  <script src="../js/virality.js"></script>
+</body>
+</html>

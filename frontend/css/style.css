@@ -1,0 +1,208 @@
+/* ── Reset & base ─────────────────────────────────────────────────────────── */
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  --red:        #e63030;
+  --red-dim:    #b02020;
+  --red-glow:   rgba(230, 48, 48, 0.25);
+  --black:      #000000;
+  --black-soft: #0d0d0d;
+  --white:      #ffffff;
+  --grey:       rgba(255, 255, 255, 0.55);
+  --font:       'Inter', system-ui, sans-serif;
+}
+
+html, body {
+  height: 100%;
+  background: var(--black);
+  color: var(--white);
+  font-family: var(--font);
+  overflow-x: hidden;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+/* ── Background video ─────────────────────────────────────────────────────── */
+
+.video-bg {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+}
+
+.video-bg video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  /* slight desaturate so red UI pops */
+  filter: saturate(0.6) brightness(0.85);
+}
+
+/* Heavy dark-red gradient overlay — keeps text legible at all times */
+.video-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0.55) 0%,
+    rgba(10, 0, 0, 0.65) 50%,
+    rgba(0, 0, 0, 0.78) 100%
+  );
+}
+
+/* ── Hero layout ──────────────────────────────────────────────────────────── */
+
+.hero {
+  position: relative;
+  z-index: 1;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 2rem 1.5rem;
+  gap: 1.5rem;
+}
+
+/* Small badge above the title */
+.hero-badge {
+  display: inline-block;
+  border: 1px solid var(--red-dim);
+  color: var(--red);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  padding: 0.35rem 1rem;
+  border-radius: 999px;
+  background: rgba(230, 48, 48, 0.08);
+}
+
+/* Main headline */
+.hero-title {
+  font-size: clamp(2.4rem, 6vw, 5rem);
+  font-weight: 800;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  color: var(--white);
+}
+
+.hero-title .accent {
+  color: var(--red);
+}
+
+/* Subtitle */
+.hero-sub {
+  max-width: 44ch;
+  font-size: clamp(1rem, 2vw, 1.2rem);
+  color: var(--grey);
+  line-height: 1.6;
+}
+
+/* ── Buttons ──────────────────────────────────────────────────────────────── */
+
+.hero-actions {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-top: 0.5rem;
+}
+
+.btn {
+  padding: 0.75rem 2rem;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+}
+
+.btn:hover {
+  transform: translateY(-2px);
+}
+
+/* Solid red */
+.btn-primary {
+  background: var(--red);
+  color: var(--white);
+  border: 2px solid var(--red);
+}
+
+.btn-primary:hover {
+  background: var(--red-dim);
+  box-shadow: 0 0 20px var(--red-glow);
+}
+
+/* Outlined */
+.btn-outline {
+  background: transparent;
+  color: var(--red);
+  border: 2px solid var(--red);
+}
+
+.btn-outline:hover {
+  background: var(--red-glow);
+  box-shadow: 0 0 20px var(--red-glow);
+}
+
+/* ── Stats row ────────────────────────────────────────────────────────────── */
+
+.stats {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  margin-top: 2rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.stat-value {
+  font-size: 2rem;
+  font-weight: 800;
+  color: var(--red);
+  line-height: 1;
+}
+
+.stat-label {
+  font-size: 0.75rem;
+  color: var(--grey);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.stat-divider {
+  width: 1px;
+  height: 2.5rem;
+  background: rgba(230, 48, 48, 0.3);
+}
+
+/* ── Responsive ───────────────────────────────────────────────────────────── */
+
+@media (max-width: 480px) {
+  .stats {
+    gap: 1.2rem;
+  }
+
+  .stat-divider {
+    display: none;
+  }
+}
