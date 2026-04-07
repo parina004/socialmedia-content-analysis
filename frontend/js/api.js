@@ -30,16 +30,18 @@ async function analyzeSynthetic(videoFile) {
 /**
  * POST /analyze/virality
  * @param {File} videoFile
- * @param {{title, post_hour, post_day, tag_count}} meta
- * @returns {Promise<{virality_score, label, probability, top_features, features}>}
+ * @param {{title, post_hour, post_day, tag_count, user_caption, user_hashtags}} meta
+ * @returns {Promise<{virality_score, label, probability, top_features, features, explanation}>}
  */
 async function analyzeVirality(videoFile, meta) {
   const form = new FormData();
-  form.append('video',      videoFile);
-  form.append('title',      meta.title      ?? '');
-  form.append('post_hour',  meta.post_hour  ?? 12);
-  form.append('post_day',   meta.post_day   ?? 1);
-  form.append('tag_count',  meta.tag_count  ?? 5);
+  form.append('video',         videoFile);
+  form.append('title',         meta.title         ?? '');
+  form.append('post_hour',     meta.post_hour      ?? 12);
+  form.append('post_day',      meta.post_day       ?? 1);
+  form.append('tag_count',     meta.tag_count      ?? 5);
+  form.append('user_caption',  meta.user_caption   ?? '');
+  form.append('user_hashtags', meta.user_hashtags  ?? '');
 
   const res = await fetch(`${API_BASE}/analyze/virality`, {
     method: 'POST',

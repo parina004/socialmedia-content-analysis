@@ -1,6 +1,6 @@
 # api/main.py
 # FastAPI backend — the single entry point for all video analysis requests.
-# Exposes 4 endpoints: /analyze/synthetic, /analyze/virality, /analyze/both, /health
+# Exposes 3 endpoints: /analyze/synthetic, /analyze/virality, /health
 # Security: MIME validation, 100MB file size limit, rate limiting (10 req/min), CORS.
 # Privacy: uploaded files are auto-deleted 5 minutes after processing completes.
 
@@ -80,12 +80,11 @@ def _get_model_b():
     from model_b import inference as model_b_inference
     return model_b_inference
 
-def _get_agent():
+def _get_reports():
     import sys
     sys.path.append(str(Path(__file__).parent.parent))
-    sys.path.append(str(Path(__file__).parent.parent / "agent"))
-    from agent.agent import run_analysis
-    return run_analysis
+    from llm.reports import forensic_report, virality_report
+    return forensic_report, virality_report
 
 # Helpers
 
@@ -162,23 +161,32 @@ async def analyze_synthetic(
         video_path.unlink(missing_ok=True)   # delete immediately on error
         raise HTTPException(status_code=500, detail=f"Model A inference failed: {str(e)}")
 
+    try:
+        forensic_report, _ = _get_reports()
+        explanation = forensic_report(result)
+    except Exception:
+        explanation = ""   # LLM failure must not block the model result
+
     return JSONResponse(content={
         "label":          result["label"],
         "confidence":     result["confidence"],
         "prob_ai":        result["prob_ai"],
         "prob_deepfake":  result["prob_deepfake"],
+        "explanation":    explanation,
     })
 
 
 @app.post("/analyze/virality", tags=["Analysis"])
 @limiter.limit("10/minute")
 async def analyze_virality(
-    request:    Request,
-    video:      UploadFile = File(...),
-    title:      str        = Form(""),
-    post_hour:  int        = Form(12),     # default: noon
-    post_day:   int        = Form(1),      # default: Tuesday (0=Monday)
-    tag_count:  int        = Form(5),
+    request:       Request,
+    video:         UploadFile = File(...),
+    title:         str        = Form(""),
+    post_hour:     int        = Form(12),     # default: noon
+    post_day:      int        = Form(1),      # default: Tuesday (0=Monday)
+    tag_count:     int        = Form(5),
+    user_caption:  str        = Form(""),
+    user_hashtags: str        = Form(""),
 ):
     """
     Predicts whether the uploaded video is likely to go viral.
@@ -210,60 +218,17 @@ async def analyze_virality(
         video_path.unlink(missing_ok=True)
         raise HTTPException(status_code=500, detail=f"Model B inference failed: {str(e)}")
 
+    try:
+        _, virality_report = _get_reports()
+        explanation = virality_report(result, user_caption, user_hashtags)
+    except Exception:
+        explanation = ""   # LLM failure must not block the model result
+
     return JSONResponse(content={
         "virality_score": result["virality_score"],
         "label":          result["label"],
         "probability":    result["probability"],
         "top_features":   result["top_features"],
         "features":       result["features"],
+        "explanation":    explanation,
     })
-
-
-@app.post("/analyze/both", tags=["Analysis"])
-@limiter.limit("10/minute")
-async def analyze_both(
-    request:       Request,
-    video:         UploadFile = File(...),
-    title:         str        = Form(""),
-    post_hour:     int        = Form(12),
-    post_day:      int        = Form(1),
-    tag_count:     int        = Form(5),
-    user_caption:  str        = Form(""),
-    user_hashtags: str        = Form(""),
-    topic:         str        = Form("general"),
-):
-    """
-    Runs the full AI agent pipeline on the uploaded video:
-      1. Synthetic detection (Model A)
-      2. Virality prediction (Model B)
-      3. Trending hashtag fetch
-      4. Forensic report (LLM + RAG)
-      5. Virality report (LLM + RAG)
-    Returns the agent's complete analysis as a single text response.
-    The uploaded file is deleted automatically after 5 minutes.
-    """
-    if not (0 <= post_hour <= 23):
-        raise HTTPException(status_code=400, detail="post_hour must be between 0 and 23.")
-    if not (0 <= post_day <= 6):
-        raise HTTPException(status_code=400, detail="post_day must be between 0 (Monday) and 6 (Sunday).")
-
-    video_path = await _save_upload(video)
-    asyncio.create_task(_schedule_delete(video_path))
-
-    try:
-        run_analysis = _get_agent()
-        output       = run_analysis(
-            video_path    = str(video_path),
-            title         = title,
-            post_hour     = post_hour,
-            post_day      = post_day,
-            tag_count     = tag_count,
-            user_caption  = user_caption,
-            user_hashtags = user_hashtags,
-            topic         = topic,
-        )
-    except Exception as e:
-        video_path.unlink(missing_ok=True)
-        raise HTTPException(status_code=500, detail=f"Agent pipeline failed: {str(e)}")
-
-    return JSONResponse(content={"analysis": output})

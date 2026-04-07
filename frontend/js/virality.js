@@ -59,10 +59,12 @@ form.addEventListener('submit', async (e) => {
   submitBtn.disabled = true;
 
   const meta = {
-    title:      document.getElementById('title').value.trim(),
-    post_hour:  parseInt(document.getElementById('post-hour').value),
-    post_day:   parseInt(document.getElementById('post-day').value),
-    tag_count:  parseInt(document.getElementById('tag-count').value),
+    title:         document.getElementById('title').value.trim(),
+    post_hour:     parseInt(document.getElementById('post-hour').value),
+    post_day:      parseInt(document.getElementById('post-day').value),
+    tag_count:     parseInt(document.getElementById('tag-count').value),
+    user_caption:  document.getElementById('caption').value.trim(),
+    user_hashtags: document.getElementById('hashtags').value.trim(),
   };
 
   try {
@@ -90,6 +92,15 @@ function renderResult(data) {
   document.getElementById('result-verdict').textContent    = data.label;
   document.getElementById('result-confidence').textContent =
     `Probability: ${(data.probability * 100).toFixed(1)}%`;
+
+  // LLM explanation
+  const expEl = document.getElementById('explanation');
+  if (data.explanation) {
+    expEl.textContent = data.explanation;
+    expEl.hidden = false;
+  } else {
+    expEl.hidden = true;
+  }
 
   // Top feature importance bars
   renderFeatureBars(data.top_features);
