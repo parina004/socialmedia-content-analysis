@@ -44,7 +44,7 @@ a {
   height: 100%;
   object-fit: cover;
   /* slight desaturate so red UI pops */
-  filter: saturate(0.6) brightness(0.85);
+  filter: saturate(0.6) brightness(1.1);
 }
 
 /* Heavy dark-red gradient overlay — keeps text legible at all times */
