@@ -139,6 +139,13 @@
   color: rgba(255, 255, 255, 0.3);
 }
 
+.video-preview {
+  width: 100%;
+  max-height: 200px;
+  border-radius: 6px;
+  object-fit: contain;
+}
+
 .upload-filename {
   font-size: 0.82rem;
   color: var(--red);
@@ -412,6 +419,26 @@ select.field-input option {
   padding: 1rem;
 }
 
+.loading-step {
+  font-size: 0.82rem;
+  color: var(--red);
+  opacity: 0.85;
+  min-height: 1.2em;
+}
+
+.loading-dots::after {
+  content: '';
+  animation: dots 1.5s steps(4, end) infinite;
+}
+
+@keyframes dots {
+  0%   { content: ''; }
+  25%  { content: '.'; }
+  50%  { content: '..'; }
+  75%  { content: '...'; }
+  100% { content: ''; }
+}
+
 .spinner {
   width: 32px;
   height: 32px;
@@ -436,6 +463,42 @@ select.field-input option {
   border-left: 3px solid rgba(230, 48, 48, 0.5);
   border-radius: 0 6px 6px 0;
 }
+
+/* ── Live log panel ──────────────────────────────────────────────────────── */
+
+.log-panel {
+  background: #0d0d0d;
+  border: 1px solid rgba(230, 48, 48, 0.2);
+  border-radius: 8px;
+  padding: 1rem 1.25rem;
+  font-family: monospace;
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.5);
+  max-height: 160px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.log-panel-title {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--red);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-bottom: 0.5rem;
+}
+
+.log-line {
+  line-height: 1.5;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+
+.log-line.info  { color: rgba(255, 255, 255, 0.6); }
+.log-line.warn  { color: #facc15; }
+.log-line.error { color: var(--red); }
 
 /* ── Error box ────────────────────────────────────────────────────────────── */
 

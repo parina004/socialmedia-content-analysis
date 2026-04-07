@@ -46,6 +46,13 @@ function setFile(file) {
   filename.textContent = file.name;
   uploadZone.classList.add('has-file');
   submitBtn.disabled = false;
+
+  // Show video preview
+  const preview = document.getElementById('video-preview');
+  const prompt  = document.getElementById('upload-prompt');
+  preview.src   = URL.createObjectURL(file);
+  preview.hidden = false;
+  prompt.hidden  = true;
 }
 
 // ── Form submission ────────────────────────────────────────────────────────
@@ -111,3 +118,4 @@ function showError(message) {
   errorBox.textContent = `Error: ${message}`;
   errorBox.hidden      = false;
 }
+

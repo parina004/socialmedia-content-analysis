@@ -31,9 +31,12 @@
 
         <div class="upload-zone" id="upload-zone">
           <input type="file" id="video-input" name="video" accept="video/*" hidden />
-          <div class="upload-icon">&#9654;</div>
-          <p class="upload-label">Drop your video here or <span class="accent link" id="browse-btn">browse</span></p>
-          <p class="upload-hint">MP4, MOV, AVI, WEBM up to 100 MB</p>
+          <video id="video-preview" class="video-preview" hidden muted playsinline controls></video>
+          <div id="upload-prompt">
+            <div class="upload-icon">&#9654;</div>
+            <p class="upload-label">Drop your video here or <span class="accent link" id="browse-btn">browse</span></p>
+            <p class="upload-hint">MP4, MOV, AVI, WEBM up to 100 MB</p>
+          </div>
           <p class="upload-filename" id="upload-filename"></p>
         </div>
 

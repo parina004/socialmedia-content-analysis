@@ -71,10 +71,10 @@ CNN_VAL_SPLIT  = 0.10   ## 10% of train frames held out for CNN validation
 PAUSE_EVERY = 500
 PAUSE_SECS  = 10
 
-## device — prefer Apple MPS, then CUDA, then CPU
+## device — CPU only during inference (MPS conflicts with MediaPipe's Metal/GL context on Apple Silicon)
+## Change back to MPS/CUDA if running standalone training without MediaPipe loaded.
 DEVICE = (
-    torch.device("mps")  if torch.backends.mps.is_available()  else
-    torch.device("cuda") if torch.cuda.is_available()           else
+    torch.device("cuda") if torch.cuda.is_available() else
     torch.device("cpu")
 )
 
@@ -344,25 +344,26 @@ def extract_video_features(
 
     s1_vecs, s2_vecs, s3_vecs = [], [], []
 
-    for jpg in jpgs:
+    log.info(f"Processing {len(jpgs)} frames...")
+    for i, jpg in enumerate(jpgs):
         img = cv2.imread(str(jpg))
         if img is None:
             continue
 
-        ## Stream 1 — EfficientNet
+        log.info(f"  Frame {i+1}/{len(jpgs)}: running EfficientNet-B4 (RGB stream)...")
         rgb    = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
         pil    = Image.fromarray(rgb)
         t      = IMAGENET_NORM(TO_TENSOR(pil)).unsqueeze(0).to(DEVICE)
-        s1_vec = efficientnet(t).squeeze().cpu().numpy()   ## (1792,)
+        s1_vec = efficientnet(t).squeeze().cpu().numpy()
         s1_vecs.append(s1_vec)
 
-        ## Stream 2 — Forensic CNN
+        log.info(f"  Frame {i+1}/{len(jpgs)}: scanning DCT/SRM frequency artifacts (Forensic CNN)...")
         forensic_t = frame_to_forensic_tensor(img).unsqueeze(0).to(DEVICE)
         _, s2_vec  = forensic_cnn(forensic_t)
-        s2_vecs.append(s2_vec.squeeze().cpu().numpy())     ## (256,)
+        s2_vecs.append(s2_vec.squeeze().cpu().numpy())
 
-        ## Stream 3 — MediaPipe geometric features
-        s3_vecs.append(geometric_features(img))            ## (16,)
+        log.info(f"  Frame {i+1}/{len(jpgs)}: extracting facial geometry (MediaPipe)...")
+        s3_vecs.append(geometric_features(img))
 
     if not s1_vecs:
         return np.zeros(2064, dtype=np.float32)
