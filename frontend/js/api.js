@@ -5,7 +5,7 @@
 const _h = window.location.hostname;
 const API_BASE = (_h === 'localhost' || _h === '127.0.0.1' || _h === '::1' || _h === '')
   ? 'http://127.0.0.1:8000'   // local dev
-  : 'https://your-app.onrender.com'; // production (update before deploy)
+  : 'https://socialmedia-content-analysis.onrender.com'; // production
 
 /**
  * POST /analyze/synthetic
