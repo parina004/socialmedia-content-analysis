@@ -1,3 +1,4 @@
+import logging
 import tempfile
 import shutil
 from pathlib import Path
@@ -9,6 +10,8 @@ import torch
 
 sys.path.append(str(Path(__file__).parent.parent))
 from model_a.extract_features import extract_video_features, build_efficientnet, ForensicCNN, DEVICE
+
+log = logging.getLogger("model_a")
 
 #thresholds from train file
 AI_THRESH = 0.50
@@ -45,13 +48,21 @@ def _load_models():
     _sub2.load_model(str(ROOT / "submodel2.json"))
 
 
+MAX_FRAMES = 8  # sample 8 evenly-spaced frames — enough for reliable detection, much faster on CPU
+
 def _extract_frames(video_path: Path, tmp_dir: Path) -> Path:
     cap = cv2.VideoCapture(str(video_path))
     fps = cap.get(cv2.CAP_PROP_FPS) or 25.0
     total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
-    n_seconds = min(int(total_frames / fps), 30)  # cap at 30 frames
+    duration = int(total_frames / fps)
 
-    for s in range(n_seconds):
+    # Pick MAX_FRAMES evenly-spaced second-marks across the video (max 30s)
+    sample_secs = [
+        int(i * min(duration, 30) / (MAX_FRAMES - 1))
+        for i in range(MAX_FRAMES)
+    ]
+
+    for s in sample_secs:
         frame_idx = int(s * fps)
         cap.set(cv2.CAP_PROP_POS_FRAMES, frame_idx)
         ret, frame = cap.read()
@@ -66,33 +77,37 @@ def _extract_frames(video_path: Path, tmp_dir: Path) -> Path:
 def predict(video_path: Path) -> dict:
     _load_models()
 
-    # 1. Extract frames to a temp folder
+    log.info(f"Extracting frames from: {video_path.name}")
     tmp_dir = Path(tempfile.mkdtemp())
     try:
         _extract_frames(video_path, tmp_dir)
-
-        # 2. Run all 3 streams → 2064-dim vector
+        n_frames = len(list(tmp_dir.glob("*.jpg")))
+        log.info(f"Extracted {n_frames} frames — running 3-stream feature extraction...")
         feature_vec = extract_video_features(tmp_dir, _efficientnet, _forensic_cnn)
     finally:
-        shutil.rmtree(tmp_dir)  # always clean up, even if something crashes
+        shutil.rmtree(tmp_dir)
 
-    # 3. Reshape to (1, 2064) — model expects a batch
     X = feature_vec.reshape(1, -1)
 
-    # 4. Get raw probabilities from both submodels
+    log.info("Submodel 2: checking if AI-Generated...")
     prob_ai = float(_sub2.predict_proba(X[:, :2048])[:, 1][0])
-    prob_df = float(_sub1.predict_proba(X)[:, 1][0])
+    log.info(f"  AI-Generated probability: {prob_ai:.4f}")
 
-    # 5. Apply cascade thresholds
+    log.info("Submodel 1: checking if Deepfake...")
+    prob_df = float(_sub1.predict_proba(X)[:, 1][0])
+    log.info(f"  Deepfake probability: {prob_df:.4f}")
+
     if prob_ai >= AI_THRESH:
-        label_idx = 2  # AI-Generated
+        label_idx = 2
         confidence = prob_ai
     elif prob_df >= DF_THRESH:
-        label_idx = 1  # Deepfake
+        label_idx = 1
         confidence = prob_df
     else:
-        label_idx = 0  # Real
+        label_idx = 0
         confidence = 1.0 - max(prob_ai, prob_df)
+
+    log.info(f"Final verdict: {LABEL_MAP[label_idx]} (confidence {confidence:.2%})")
 
     return {
         "label": LABEL_MAP[label_idx],

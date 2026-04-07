@@ -1,7 +1,9 @@
 // api.js
 // Shared API client — all fetch calls to the FastAPI backend go through here.
+// Also provides startLogStream() / stopLogStream() for the live log panel.
 
-const API_BASE = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+const _h = window.location.hostname;
+const API_BASE = (_h === 'localhost' || _h === '127.0.0.1' || _h === '::1' || _h === '')
   ? 'http://127.0.0.1:8000'   // local dev
   : 'https://your-app.onrender.com'; // production (update before deploy)
 
@@ -54,4 +56,42 @@ async function analyzeVirality(videoFile, meta) {
   }
 
   return res.json();
+}
+
+// ── Live log streaming ─────────────────────────────────────────────────────
+
+let _logSource = null;
+
+function startLogStream() {
+  const panel    = document.getElementById('log-panel');
+  const logLines = document.getElementById('log-lines');
+  if (!panel) return;
+
+  panel.hidden   = false;
+  logLines.innerHTML = '';
+
+  _logSource = new EventSource(`${API_BASE}/logs`);
+
+  _logSource.onmessage = (e) => {
+    const msg = e.data;
+    if (msg === 'connected' || msg.startsWith(':')) return;
+
+    const line = document.createElement('div');
+    line.className = 'log-line';
+
+    if (msg.includes('ERROR') || msg.includes('error'))       line.classList.add('error');
+    else if (msg.includes('WARNING') || msg.includes('warn')) line.classList.add('warn');
+    else line.classList.add('info');
+
+    line.textContent = msg;
+    logLines.appendChild(line);
+    panel.scrollTop = panel.scrollHeight;
+  };
+}
+
+function stopLogStream() {
+  if (_logSource) {
+    _logSource.close();
+    _logSource = null;
+  }
 }

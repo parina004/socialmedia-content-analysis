@@ -49,9 +49,9 @@ TMPDIR.mkdir(exist_ok=True)
 
 ## settings
 
-CLIP_SECONDS      = 60
-FRAME_STEP_S      = 1      ## sample 1 frame per second
-EMOTION_STEP      = 10     ## run DeepFace every 10 frames
+CLIP_SECONDS      = 30     ## analyse first 30s only at inference (60s for training)
+FRAME_STEP_S      = 3      ## sample 1 frame every 3 seconds (was 1/sec)
+EMOTION_STEP      = 3      ## run DeepFace every 3 frames (was every 10)
 
 BATCH_SIZE        = 200    ## how many videos to process per loop before pausing for GC
                            ## the script loops automatically — no need to re-run manually

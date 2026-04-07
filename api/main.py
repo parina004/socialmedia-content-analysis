@@ -5,8 +5,10 @@
 # Privacy: uploaded files are auto-deleted 5 minutes after processing completes.
 
 import asyncio
+import logging
 import os
 import uuid
+from contextlib import asynccontextmanager
 from pathlib import Path
 
 from dotenv import load_dotenv
@@ -17,6 +19,13 @@ from slowapi import Limiter, _rate_limit_exceeded_handler
 from slowapi.errors import RateLimitExceeded
 from slowapi.util import get_remote_address
 
+# Logging — print all INFO+ logs from our modules to the terminal
+logging.basicConfig(
+    level   = logging.INFO,
+    format  = "%(levelname)s  [%(name)s]  %(message)s",
+    handlers= [logging.StreamHandler()],
+)
+
 load_dotenv()
 
 # App setup
@@ -24,10 +33,19 @@ load_dotenv()
 # slowapi uses the client IP as the rate limit key
 limiter = Limiter(key_func=get_remote_address)
 
+
+@asynccontextmanager
+async def lifespan(_: FastAPI):
+    # Models load lazily on first request — pre-warming caused segfaults on Apple M4
+    # due to a Metal/GL context conflict between MediaPipe and PyTorch safetensors loading.
+    yield
+
+
 app = FastAPI(
     title       = "Social Media Content Analysis API",
     description = "Detects synthetic media and predicts virality for uploaded videos.",
     version     = "1.0.0",
+    lifespan    = lifespan,
 )
 
 # Register the rate-limit error handler so 429 is returned (not 500) on breach
@@ -35,18 +53,26 @@ app.state.limiter = limiter
 app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 
 # CORS — allow requests only from the Netlify frontend (and localhost for dev)
-ALLOWED_ORIGINS = os.getenv(
-    "ALLOWED_ORIGINS",
-    "http://localhost:3000,http://127.0.0.1:3000",   # dev fallback
-).split(",")
+ALLOWED_ORIGINS = os.getenv("ALLOWED_ORIGINS", "*")
 
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins     = ALLOWED_ORIGINS,
-    allow_credentials = True,
-    allow_methods     = ["GET", "POST"],
-    allow_headers     = ["*"],
-)
+# In production set ALLOWED_ORIGINS env var to your Netlify URL
+# In dev we allow all origins so local testing works regardless of port/IPv4/IPv6
+if ALLOWED_ORIGINS == "*":
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins     = ["*"],
+        allow_credentials = False,
+        allow_methods     = ["GET", "POST"],
+        allow_headers     = ["*"],
+    )
+else:
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins     = ALLOWED_ORIGINS.split(","),
+        allow_credentials = True,
+        allow_methods     = ["GET", "POST"],
+        allow_headers     = ["*"],
+    )
 
 # Constants
 
@@ -138,6 +164,7 @@ async def health_check():
     return {"status": "ok"}
 
 
+
 @app.post("/analyze/synthetic", tags=["Analysis"])
 @limiter.limit("10/minute")
 async def analyze_synthetic(
@@ -150,22 +177,20 @@ async def analyze_synthetic(
     The uploaded file is deleted automatically after 5 minutes.
     """
     video_path = await _save_upload(video)
-
-    # Schedule background cleanup — fire-and-forget
     asyncio.create_task(_schedule_delete(video_path))
 
     try:
-        model_a  = _get_model_a()
-        result   = model_a.predict(video_path)
+        model_a = _get_model_a()
+        result  = model_a.predict(video_path)
     except Exception as e:
-        video_path.unlink(missing_ok=True)   # delete immediately on error
+        video_path.unlink(missing_ok=True)
         raise HTTPException(status_code=500, detail=f"Model A inference failed: {str(e)}")
 
     try:
         forensic_report, _ = _get_reports()
         explanation = forensic_report(result)
     except Exception:
-        explanation = ""   # LLM failure must not block the model result
+        explanation = ""
 
     return JSONResponse(content={
         "label":          result["label"],
@@ -222,7 +247,7 @@ async def analyze_virality(
         _, virality_report = _get_reports()
         explanation = virality_report(result, user_caption, user_hashtags)
     except Exception:
-        explanation = ""   # LLM failure must not block the model result
+        explanation = ""
 
     return JSONResponse(content={
         "virality_score": result["virality_score"],
