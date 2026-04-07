@@ -1,0 +1,6 @@
+[build]
+  publish = "frontend"
+  command = ""
+
+[build.environment]
+  NETLIFY_SKIP_PYTHON_BUILD = "true"
