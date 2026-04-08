@@ -4,7 +4,7 @@
 const _h = window.location.hostname;
 const API_BASE = (_h === 'localhost' || _h === '127.0.0.1' || _h === '::1' || _h === '')
   ? 'http://127.0.0.1:8000'   // local dev
-  : 'https://synthsenses.netlify.app'; // production
+  : 'https://socialmedia-content-analysis.onrender.com'; // production
 
 /**
  * Wakes the Render server if it has spun down (free tier cold start ~30-90s).
