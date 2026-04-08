@@ -1,6 +1,5 @@
 // api.js
 // Shared API client — all fetch calls to the FastAPI backend go through here.
-// Also provides startLogStream() / stopLogStream() for the live log panel.
 
 const _h = window.location.hostname;
 const API_BASE = (_h === 'localhost' || _h === '127.0.0.1' || _h === '::1' || _h === '')
@@ -8,11 +7,47 @@ const API_BASE = (_h === 'localhost' || _h === '127.0.0.1' || _h === '::1' || _h
   : 'https://socialmedia-content-analysis.onrender.com'; // production
 
 /**
+ * Wakes the Render server if it has spun down (free tier cold start ~30-90s).
+ * Updates the loading message while waiting.
+ */
+async function _wakeServer() {
+  const TIMEOUT_MS = 90_000;
+  const POLL_MS    = 3_000;
+  const deadline   = Date.now() + TIMEOUT_MS;
+
+  // Try once immediately — if server is up this returns fast
+  try {
+    const res = await fetch(`${API_BASE}/health`, { method: 'GET' });
+    if (res.ok) return;
+  } catch (_) { /* server is sleeping, start polling */ }
+
+  // Show "waking up" message if server didn't respond immediately
+  const loadingEl = document.getElementById('loading');
+  const loadingP  = loadingEl ? loadingEl.querySelector('p') : null;
+  if (loadingP) loadingP.textContent = 'Waking up server (first request may take ~60s)…';
+
+  while (Date.now() < deadline) {
+    await new Promise(r => setTimeout(r, POLL_MS));
+    try {
+      const res = await fetch(`${API_BASE}/health`, { method: 'GET' });
+      if (res.ok) {
+        if (loadingP) loadingP.textContent = 'Analysing video…';
+        return;
+      }
+    } catch (_) { /* still booting */ }
+  }
+
+  throw new Error('Server took too long to wake up. Please try again in a moment.');
+}
+
+/**
  * POST /analyze/synthetic
  * @param {File} videoFile
  * @returns {Promise<{label, confidence, prob_ai, prob_deepfake}>}
  */
 async function analyzeSynthetic(videoFile) {
+  await _wakeServer();
+
   const form = new FormData();
   form.append('video', videoFile);
 
@@ -36,6 +71,8 @@ async function analyzeSynthetic(videoFile) {
  * @returns {Promise<{virality_score, label, probability, top_features, features, explanation}>}
  */
 async function analyzeVirality(videoFile, meta) {
+  await _wakeServer();
+
   const form = new FormData();
   form.append('video',         videoFile);
   form.append('title',         meta.title         ?? '');
@@ -56,42 +93,4 @@ async function analyzeVirality(videoFile, meta) {
   }
 
   return res.json();
-}
-
-// ── Live log streaming ─────────────────────────────────────────────────────
-
-let _logSource = null;
-
-function startLogStream() {
-  const panel    = document.getElementById('log-panel');
-  const logLines = document.getElementById('log-lines');
-  if (!panel) return;
-
-  panel.hidden   = false;
-  logLines.innerHTML = '';
-
-  _logSource = new EventSource(`${API_BASE}/logs`);
-
-  _logSource.onmessage = (e) => {
-    const msg = e.data;
-    if (msg === 'connected' || msg.startsWith(':')) return;
-
-    const line = document.createElement('div');
-    line.className = 'log-line';
-
-    if (msg.includes('ERROR') || msg.includes('error'))       line.classList.add('error');
-    else if (msg.includes('WARNING') || msg.includes('warn')) line.classList.add('warn');
-    else line.classList.add('info');
-
-    line.textContent = msg;
-    logLines.appendChild(line);
-    panel.scrollTop = panel.scrollHeight;
-  };
-}
-
-function stopLogStream() {
-  if (_logSource) {
-    _logSource.close();
-    _logSource = null;
-  }
 }
