@@ -1,18 +1,29 @@
 // app.js
-// Handles the background video loop — clamps playback to the first 20 seconds only.
+// Handles the background video loop — clamps playback to the first 19 seconds only.
 
 const video = document.getElementById('bg-video');
+const hero  = document.querySelector('.hero');
 
 if (video) {
-  // Once enough data is loaded, start from 0 and enforce the 20s cap
+  // Skip past the first frame (often black) — start at second 1
   video.addEventListener('loadedmetadata', () => {
-    video.currentTime = 0;
+    video.currentTime = 1;
   });
 
-  // Every time the video ticks past 20 seconds, snap back to the start
+  // Once video is actually playing, fade in the hero content
+  video.addEventListener('playing', () => {
+    if (hero) hero.classList.add('hero-visible');
+  });
+
+  // Fallback: if video doesn't fire 'playing' within 800ms, show content anyway
+  setTimeout(() => {
+    if (hero) hero.classList.add('hero-visible');
+  }, 800);
+
+  // Every time the video ticks past 19 seconds, snap back to second 1
   video.addEventListener('timeupdate', () => {
-    if (video.currentTime >= 20) {
-      video.currentTime = 0;
+    if (video.currentTime >= 19) {
+      video.currentTime = 1;
     }
   });
 }
