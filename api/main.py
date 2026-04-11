@@ -55,24 +55,20 @@ app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 # CORS — allow requests only from the Netlify frontend (and localhost for dev)
 ALLOWED_ORIGINS = os.getenv("ALLOWED_ORIGINS", "*")
 
-# In production set ALLOWED_ORIGINS env var to your Netlify URL
-# In dev we allow all origins so local testing works regardless of port/IPv4/IPv6
-if ALLOWED_ORIGINS == "*":
-    app.add_middleware(
-        CORSMiddleware,
-        allow_origins     = ["*"],
-        allow_credentials = False,
-        allow_methods     = ["GET", "POST"],
-        allow_headers     = ["*"],
-    )
-else:
-    app.add_middleware(
-        CORSMiddleware,
-        allow_origins     = ALLOWED_ORIGINS.split(","),
-        allow_credentials = True,
-        allow_methods     = ["GET", "POST"],
-        allow_headers     = ["*"],
-    )
+# Strip trailing slashes from each origin to avoid mismatch
+_origins = (
+    ["*"] if ALLOWED_ORIGINS == "*"
+    else [o.strip().rstrip("/") for o in ALLOWED_ORIGINS.split(",")]
+)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins     = _origins,
+    allow_credentials = False,   # must be False when using wildcard or simple origins
+    allow_methods     = ["GET", "POST", "OPTIONS"],
+    allow_headers     = ["*"],
+    expose_headers    = ["*"],
+)
 
 # Constants
 
@@ -157,6 +153,11 @@ async def _schedule_delete(file_path: Path, delay: int = FILE_TTL_SECONDS):
 
 
 # Endpoints
+
+@app.get("/", tags=["Health"])
+async def root():
+    """Root endpoint — prevents 404 on Render's internal health checks."""
+    return {"status": "ok", "service": "SynthSenses API"}
 
 @app.get("/health", tags=["Health"])
 async def health_check():
