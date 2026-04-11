@@ -1,4 +1,6 @@
 # SynthSenses
+[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/parina004/socialmedia-content-analysis)
+
 
 AI-generated content is everywhere. A video can look completely real and be entirely fabricated. With generative models getting better every month, the gap between real and synthetic is closing fast. Separately, platforms are flooded with content competing for attention, and most creators are guessing at what actually works.
 
@@ -19,3 +21,4 @@ The detection model is a two-stage cascade. The virality model is trained on a Y
 ---
 
 **Live:** https://synthsenses.netlify.app — actively in development, full inference pipeline runs locally due to model memory requirements on free hosting.
+
