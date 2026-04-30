@@ -6,7 +6,7 @@ import numpy as np
 import pandas as pd
 
 sys.path.append(str(Path(__file__).parent.parent))
-from data.model_b_datasets.extract_features import (
+from model_b.features_inference import (
     extract_visual_features,
     extract_audio_features,
     extract_metadata_features,

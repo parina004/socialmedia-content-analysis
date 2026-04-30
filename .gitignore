@@ -48,3 +48,6 @@ model_b/feature_importance.png
 # RAG — vector database committed (1.2MB, built locally)
 # rag/chroma_db/
 rag/chroma_db/*/
+
+# Output files
+agent_output.txt

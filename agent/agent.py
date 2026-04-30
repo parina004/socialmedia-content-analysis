@@ -62,7 +62,6 @@ Request: {input}
 {agent_scratchpad}
 """)
 
-
 def build_agent() -> AgentExecutor:
     llm = ChatGroq(model = "llama-3.3-70b-versatile",temperature = 0)
 
@@ -79,7 +78,6 @@ def build_agent() -> AgentExecutor:
         handle_parsing_errors = True,  ## recovers if LLM formats output wrong
         max_iterations      = 20,      ## prevents infinite loops
     )
-
 
 def run_analysis(
     video_path:    str,
@@ -113,10 +111,9 @@ def run_analysis(
     result = executor.invoke({"input": request})
     return result["output"]
 
-
 if __name__ == "__main__":
     output = run_analysis(
-        video_path    = r"C:\Users\parin\Downloads\test2.mp4",
+        video_path    = r"D:\todelete\5.mp4",
         title         = "Test Video Title",
         post_hour     = 15,
         post_day      = 2,
