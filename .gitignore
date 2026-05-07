@@ -34,20 +34,24 @@ data/model_b_datasets/.collection_checkpoint.json
 data/model_b_datasets/.extract_checkpoint.json
 data/model_b_datasets/.tmp_clips/
 
-# Model A — ignore large training artifacts, keep model weights for inference
+# Model A — ignore large training artifacts and model weights (uploaded to HF manually)
 model_a/features_train.npz
 model_a/features_test.npz
+model_a/forensic_cnn.pth
 model_a/.extract_checkpoint.json
 model_a/.append_checkpoint.json
 model_a/.sm1_checkpoint.json
 model_a/.sm2_checkpoint.json
 
-# Model B — ignore training artifacts, keep model.pkl for inference
+# Model B — ignore training artifacts and model (uploaded to HF manually)
+model_b/model.pkl
 model_b/feature_importance.png
 
-# RAG — vector database committed (1.2MB, built locally)
-# rag/chroma_db/
-rag/chroma_db/*/
+# RAG — vector database (uploaded to HF manually)
+rag/chroma_db/
+
+# Frontend large assets (uploaded to HF manually)
+frontend/video/tomvsbrad.mp4
 
 # Output files
 agent_output.txt
