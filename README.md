@@ -1,3 +1,12 @@
+---
+title: SynthSenses API
+emoji: 🔍
+colorFrom: blue
+colorTo: purple
+sdk: docker
+pinned: false
+---
+
 # SynthSenses
 [![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/parina004/socialmedia-content-analysis)
 
