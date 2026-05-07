@@ -12,7 +12,7 @@ from datetime import datetime
 from pathlib import Path
 
 import cv2
-import mediapipe as mp
+import mediapipe.python.solutions.face_detection as _mp_face_det
 import numpy as np
 import piq
 import torch
@@ -23,7 +23,7 @@ log = logging.getLogger(__name__)
 CLIP_SECONDS = 30
 EMOTION_STEP = 3   # kept so frame-loop logic is identical; emotion block is just skipped
 
-_face_detector = mp.solutions.face_detection.FaceDetection(
+_face_detector = _mp_face_det.FaceDetection(
     model_selection=0,
     min_detection_confidence=0.5,
 )
