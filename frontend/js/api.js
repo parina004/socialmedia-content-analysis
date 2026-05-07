@@ -4,7 +4,7 @@
 const _h = window.location.hostname;
 const API_BASE = (_h === 'localhost' || _h === '127.0.0.1' || _h === '::1' || _h === '')
   ? 'http://127.0.0.1:8000'   // local dev
-  : 'https://socialmedia-content-analysis.onrender.com'; // production
+  : 'https://parina13-synthsenses-api.hf.space'; // production
 
 /**
  * Wakes the Render server if it has spun down (free tier cold start ~30-90s).
@@ -24,7 +24,7 @@ async function _wakeServer() {
   // Show "waking up" message if server didn't respond immediately
   const loadingEl = document.getElementById('loading');
   const loadingP  = loadingEl ? loadingEl.querySelector('p') : null;
-  if (loadingP) loadingP.textContent = 'Waking up server (first request may take ~60s)…';
+  if (loadingP) loadingP.textContent = 'Waking up server (first request may take ~30s)…';
 
   while (Date.now() < deadline) {
     await new Promise(r => setTimeout(r, POLL_MS));
