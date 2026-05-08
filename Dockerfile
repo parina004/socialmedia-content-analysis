@@ -16,6 +16,14 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . .
 
+# Download model files (excluded from git due to size, stored in HF Space)
+RUN python -c "\
+import shutil; \
+from huggingface_hub import hf_hub_download; \
+shutil.copy(hf_hub_download(repo_id='parina13/synthsenses-api', filename='model_a/forensic_cnn.pth', repo_type='space'), 'model_a/forensic_cnn.pth'); \
+shutil.copy(hf_hub_download(repo_id='parina13/synthsenses-api', filename='model_b/model.pkl', repo_type='space'), 'model_b/model.pkl'); \
+print('Models downloaded')"
+
 # HF Spaces Docker uses port 7860
 EXPOSE 7860
 
