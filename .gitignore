@@ -26,6 +26,8 @@ data/model_a_datasets/frames/
 data/model_a_datasets/videos/
 data/model_a_datasets/.tmp_youtube_real/
 data/model_a_datasets/.youtube_real_checkpoint.json
+data/model_a_datasets/new_videos/
+data/model_a_datasets/.channel_collect_checkpoint.json
 
 # Model B datasets — ignore large data files but track Python scripts
 data/model_b_datasets/csv/*
@@ -52,3 +54,5 @@ data/model_b_datasets/.tmp_clips/
 # model_b/metrics.json
 # model_b/metrics.txt
 # model_b/feature_importance.pngmodel_a/features_train.npz
+
+*.bin
