@@ -55,3 +55,8 @@ data/model_b_datasets/.tmp_clips/
 
 # RAG — generated vector database (rebuild with build_vectorstore.py)
 rag/chroma_db/
+
+# Report files
+*.docx
+*.doc
+generate_report.py

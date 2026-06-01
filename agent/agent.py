@@ -116,7 +116,7 @@ def run_analysis(
 
 if __name__ == "__main__":
     output = run_analysis(
-        video_path    = r"C:\Users\parin\Downloads\test2.mp4",
+        video_path    = r"D:\todelete\ai.mp4",
         title         = "Test Video Title",
         post_hour     = 15,
         post_day      = 2,

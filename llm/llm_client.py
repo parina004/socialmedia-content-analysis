@@ -1,7 +1,6 @@
 """
 llm/llm_client.py
-Single entry-point for generating LLM explanations.
-Tries Ollama (local, free) first. If that fails, falls back to Groq (cloud, free tier).
+Single entry-point for generating LLM explanations via Groq.
 This file never sees raw video — it only receives formatted prompt strings from prompts.py.
 """
 
@@ -16,28 +15,11 @@ load_dotenv()
 
 logger = logging.getLogger(__name__)
 
-## The local Ollama model name — must be pulled first with: ollama pull llama3
-OLLAMA_MODEL = "llama3"
-
-## The Groq cloud model — LLaMA 3.1 8B, fast and free tier, same size as our local Ollama model
+## The Groq cloud model — LLaMA 3.1 8B, fast and free tier
 GROQ_MODEL = "llama-3.1-8b-instant"
 
 ## How many tokens the LLM can write in its reply — 512 is enough for a short explanation
 MAX_TOKENS = 512
-
-
-def _call_ollama(prompt: str) -> str:
-    ## Import ollama inside the function so the rest of the file still works if ollama isn't installed
-    import ollama  # type: ignore
-
-    ## Send the prompt as a user message and get the assistant's reply back
-    response = ollama.chat(
-        model=OLLAMA_MODEL,
-        messages=[{"role": "user", "content": prompt}],
-        options={"num_predict": MAX_TOKENS},
-    )
-    ## The actual reply text is buried inside response["message"]["content"]
-    return response["message"]["content"].strip()
 
 
 def _call_groq(prompt: str) -> str:
@@ -73,25 +55,8 @@ def _call_groq(prompt: str) -> str:
 
 def generate(prompt: str) -> str:
     """
-    Send a formatted prompt to the LLM and return the plain-text explanation.
-    Tries local Ollama first, then falls back to Groq if Ollama is unavailable.
+    Send a formatted prompt to Groq and return the plain-text explanation.
     """
-    ## First try: local Ollama — no internet or API key needed
-    try:
-        logger.info("Attempting Ollama (%s) …", OLLAMA_MODEL)
-        result = _call_ollama(prompt)
-        logger.info("Ollama succeeded.")
-        return result
-
-    except Exception as ollama_err:
-        ## Ollama is not running or the model hasn't been pulled — try Groq instead
-        logger.warning(
-            "Ollama unavailable (%s). Falling back to Groq %s.",
-            ollama_err,
-            GROQ_MODEL,
-        )
-
-    ## Second try: Groq cloud — needs GROQ_API_KEY in .env
     try:
         logger.info("Attempting Groq (%s) …", GROQ_MODEL)
         result = _call_groq(prompt)
@@ -99,13 +64,11 @@ def generate(prompt: str) -> str:
         return result
 
     except Exception as groq_err:
-        ## Both options failed — raise a clear error so the user knows what to fix
-        logger.error("Groq also failed: %s", groq_err)
+        logger.error("Groq failed: %s", groq_err)
         raise RuntimeError(
             f"LLM generation failed.\n"
-            f"  Ollama error : check that `ollama serve` is running and `ollama pull llama3` was done.\n"
-            f"  Groq error   : {groq_err}\n"
-            f"  Set GROQ_API_KEY in your .env file (free at console.groq.com)."
+            f"  Groq error: {groq_err}\n"
+            f"  Ensure GROQ_API_KEY is set in your .env file (free at console.groq.com)."
         ) from groq_err
 
 
