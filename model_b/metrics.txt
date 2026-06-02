@@ -4,41 +4,41 @@ MODEL B — VIRALITY PREDICTION — EVALUATION REPORT
 
 BEST HYPERPARAMETERS  (Optuna · 50 trials · 5-fold CV)
 ------------------------------------------
-  n_estimators               1017
+  n_estimators               1213
   max_depth                  10
-  learning_rate              0.0365265
-  num_leaves                 92
-  min_child_samples          10
-  subsample                  0.647076
-  colsample_bytree           0.686791
-  reg_alpha                  0.000206898
-  reg_lambda                 0.000738562
+  learning_rate              0.00427597
+  num_leaves                 81
+  min_child_samples          21
+  subsample                  0.776527
+  colsample_bytree           0.50469
+  reg_alpha                  0.0623529
+  reg_lambda                 0.00276594
 
-  Best CV ROC-AUC (mean) : 0.8612
+  Best CV ROC-AUC (mean) : 0.7613
 
 TEST SET METRICS
 ------------------------------------------
-  Accuracy   : 0.7995
-  Precision  : 0.7200  (of predicted viral, how many truly were)
-  Recall     : 0.6545  (of all viral, how many were caught)
-  F1 Score   : 0.6857
-  ROC-AUC    : 0.8544
+  Accuracy   : 0.7011
+  Precision  : 0.5516  (of predicted viral, how many truly were)
+  Recall     : 0.5636  (of all viral, how many were caught)
+  F1 Score   : 0.5576
+  ROC-AUC    : 0.7464
 
 CONFUSION MATRIX  (rows = actual, cols = predicted)
 ------------------------------------------
                 predicted not_viral   predicted viral
-  actual not_viral   478                 70
-  actual viral       95                  180
+  actual not_viral   422                 126
+  actual viral       120                 155
 
 CLASSIFICATION REPORT
 ------------------------------------------
               precision    recall  f1-score   support
 
-   not_viral       0.83      0.87      0.85       548
-       viral       0.72      0.65      0.69       275
+   not_viral       0.78      0.77      0.77       548
+       viral       0.55      0.56      0.56       275
 
-    accuracy                           0.80       823
-   macro avg       0.78      0.76      0.77       823
-weighted avg       0.80      0.80      0.80       823
+    accuracy                           0.70       823
+   macro avg       0.67      0.67      0.67       823
+weighted avg       0.70      0.70      0.70       823
 
 ==============================================================

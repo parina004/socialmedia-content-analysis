@@ -1,0 +1,61 @@
+==============================================================
+MODEL B — ARCHITECTURE COMPARISON REPORT
+==============================================================
+
+WHY THE CHANGE WAS MADE
+------------------------------------------
+  The original model included like_to_view_ratio and comment_to_view_ratio
+  as training features. These are post-publication engagement metrics —
+  only known after a video already has views on YouTube.
+
+  At inference on new (unpublished) videos, these were approximated with
+  fixed mean values. However, the model had learned them as its top 2
+  most important features and relied on them heavily. Feeding mean values
+  produced always-not-viral predictions regardless of actual video content.
+
+  The retrained model uses content-only features (visual, audio, metadata)
+  that are all knowable before a video is posted.
+
+
+FEATURE SET COMPARISON
+------------------------------------------
+  V1 — 22 features (with engagement ratios):
+    visual (7) + audio (5) + metadata (8) + like_to_view_ratio + comment_to_view_ratio
+
+  V2 — 20 features (content-only):
+    visual (7) + audio (5) + metadata (8)
+
+
+METRICS COMPARISON
+------------------------------------------
+  Metric             V1 (with ratios)    V2 (content-only)
+  --------------------------------------------------------
+  Accuracy           0.7995              0.7011
+  Precision (viral)  0.7200              0.5516
+  Recall (viral)     0.6545              0.5636
+  F1 (viral)         0.6857              0.5576
+  ROC-AUC            0.8544              0.7464
+  CV ROC-AUC         0.8612              0.7613
+
+
+CONFUSION MATRICES
+------------------------------------------
+  V1 — with engagement ratios:
+                  pred not_viral   pred viral
+  actual not_viral   478             70
+  actual viral        95            180
+
+  V2 — content-only:
+                  pred not_viral   pred viral
+  actual not_viral   422            126
+  actual viral       120            155
+
+
+CONCLUSION
+------------------------------------------
+  V1 accuracy (80%) was inflated by leaky post-publication features.
+  V2 accuracy (70%) is a genuine measure of content-based virality prediction.
+  V2 correctly predicts viral/not-viral at inference — V1 predicted
+  not-viral for every video regardless of quality.
+
+==============================================================

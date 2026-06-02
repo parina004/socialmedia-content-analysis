@@ -19,11 +19,7 @@ FEATURE_COLS = [
     "tempo_bpm", "rms_energy", "speech_ratio", "zero_crossing_rate", "beat_strength",
     "title_sentiment", "title_length", "title_has_question", "title_has_number",
     "description_length", "tag_count", "upload_hour", "upload_day",
-    "like_to_view_ratio", "comment_to_view_ratio",
 ]
-
-MEAN_LIKE_RATIO = 0.04      # ~4% of viewers like — typical YouTube average
-MEAN_COMMENT_RATIO = 0.005  # ~0.5% of viewers comment — typical YouTube average
 
 _model = None
 
@@ -64,8 +60,6 @@ def predict(video_path: Path, title: str, post_hour: int, post_day: int, tag_cou
         **visual,
         **audio,
         **metadata,
-        "like_to_view_ratio": MEAN_LIKE_RATIO,
-        "comment_to_view_ratio": MEAN_COMMENT_RATIO,
     }
 
     df = pd.DataFrame([all_features])[FEATURE_COLS]

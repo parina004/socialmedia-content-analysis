@@ -65,7 +65,10 @@ N_TRIALS   = 50
 N_FOLDS    = 5
 
 
-## the 22 features the model trains on (columns 4–25 in features.csv)
+## the 20 content features the model trains on — engagement ratios excluded
+## because like_to_view_ratio and comment_to_view_ratio are post-publication
+## metrics (only known after the video already has views), making them
+## unusable for predicting virality of new videos before they are posted.
 FEATURE_COLS = [
     ## visual (7)
     "brisque_score", "color_vibrancy", "motion_intensity",
@@ -76,8 +79,6 @@ FEATURE_COLS = [
     ## metadata (8)
     "title_sentiment", "title_length", "title_has_question", "title_has_number",
     "description_length", "tag_count", "upload_hour", "upload_day",
-    ## engagement ratios (2) — set to dataset mean at inference for new videos
-    "like_to_view_ratio", "comment_to_view_ratio",
 ]
 
 
