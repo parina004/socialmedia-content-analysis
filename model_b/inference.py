@@ -39,6 +39,18 @@ def predict(video_path: Path, title: str, post_hour: int, post_day: int, tag_cou
 
     visual = extract_visual_features(video_path)
     audio = extract_audio_features(video_path)
+    
+    # Replace NaN values with reasonable defaults so model can still predict
+    if audio.get("tempo_bpm") != audio.get("tempo_bpm"):  # NaN check
+        audio["tempo_bpm"] = 120.0
+    if audio.get("rms_energy") != audio.get("rms_energy"):
+        audio["rms_energy"] = 0.05
+    if audio.get("speech_ratio") != audio.get("speech_ratio"):
+        audio["speech_ratio"] = 0.3
+    if audio.get("zero_crossing_rate") != audio.get("zero_crossing_rate"):
+        audio["zero_crossing_rate"] = 0.15
+    if audio.get("beat_strength") != audio.get("beat_strength"):
+        audio["beat_strength"] = 0.5
 
     row = {
         "title": title,

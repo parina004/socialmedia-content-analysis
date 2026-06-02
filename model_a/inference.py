@@ -38,11 +38,11 @@ def _load_models():
     _forensic_cnn.eval()
 
     # Load XGBoost models
-    _sub1 = xgb.XGBClassifier()
-    _sub1.load_model(str(ROOT / "submodel1.json"))
+    _sub1 = xgb.XGBClassifier()  # real vs deepfake (2064 features)
+    _sub1.load_model(str(ROOT / "submodel_df.json"))
 
-    _sub2 = xgb.XGBClassifier()
-    _sub2.load_model(str(ROOT / "submodel2.json"))
+    _sub2 = xgb.XGBClassifier()  # real vs AI-generated (2048 features)
+    _sub2.load_model(str(ROOT / "submodel_ai.json"))
 
 
 def _extract_frames(video_path: Path, tmp_dir: Path) -> Path:
@@ -82,7 +82,6 @@ def predict(video_path: Path) -> dict:
     # 4. Get raw probabilities from both submodels
     prob_ai = float(_sub2.predict_proba(X[:, :2048])[:, 1][0])
     prob_df = float(_sub1.predict_proba(X)[:, 1][0])
-
     # 5. Apply cascade thresholds
     if prob_ai >= AI_THRESH:
         label_idx = 2  # AI-Generated

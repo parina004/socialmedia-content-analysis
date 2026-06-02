@@ -47,8 +47,14 @@ def run_virality_prediction(input_json: str) -> str:
     post_day (0-6 where 0=Monday), tag_count.
     Returns: JSON string with virality score, label, probability, and all features.
     """
-    input_json = input_json.strip().strip("'\"")
-    data   = json.loads(input_json)
+    # Handle both JSON string and dict input
+    if isinstance(input_json, dict):
+        data = input_json
+    else:
+        input_json = input_json.strip().strip("'\"")
+        # Replace single backslashes with double to fix Windows path escaping
+        input_json = input_json.replace("\\", "\\\\")
+        data = json.loads(input_json)
     result = model_b_inference.predict(
         video_path = Path(data["video_path"]),
         title      = data["title"],
@@ -193,11 +199,24 @@ def generate_virality_report(input_json: str) -> str:
     Returns: a written virality analysis report with specific improvement tips.
     """
     input_json = input_json.strip().strip("'\"")        
-    data            = json.loads(input_json)
-    vr = data["virality_result"]
-    virality_result = vr if isinstance(vr, dict) else json.loads(vr)
-    user_caption    = data.get("user_caption", "")
-    user_hashtags   = data.get("user_hashtags", "")
+    data = json.loads(input_json)
+    
+    # Handle both formats: nested with virality_result key, or flat structure
+    if "virality_result" in data:
+        vr = data["virality_result"]
+        virality_result = vr if isinstance(vr, dict) else json.loads(vr)
+        user_caption = data.get("user_caption", "")
+        user_hashtags = data.get("user_hashtags", "")
+    else:
+        # Agent passed flat structure with user_caption/hashtags at same level
+        virality_result = {
+            "virality_score": data.get("virality_score"),
+            "label": data.get("label"),
+            "probability": data.get("probability"),
+            "features": data.get("features", {})
+        }
+        user_caption = data.get("user_caption", "")
+        user_hashtags = data.get("user_hashtags", "")
 
     f = virality_result["features"]
 
