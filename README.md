@@ -50,7 +50,7 @@ The cascade was trained on FaceForensics++, DFDC, Celeb-DF v2, WildDeepfake, and
 
 Twenty-two content-based features are extracted from the video and its metadata, split across three groups: 7 visual (BRISQUE quality, colour vibrancy, motion intensity, face presence, facial emotion, thumbnail brightness), 5 audio (tempo, RMS energy, speech ratio, zero-crossing rate, beat strength), and 10 metadata (title sentiment, title length, upload hour/day, tag count, and more). None of the features depend on the creator's subscriber count or posting history, so the model works for any channel, including new or small creators.
 
-Videos are labelled Viral (top 20% by engagement percentile) or Not Viral (bottom 40%), with the middle 40% excluded to reduce label noise. A LightGBM classifier, tuned with Optuna over 50 trials of 5-fold cross-validation, achieves a **ROC-AUC of 0.854** and 80% accuracy on the held-out test set.
+Videos are labelled Viral (top 20% by engagement percentile) or Not Viral (bottom 40%), with the middle 40% excluded to reduce label noise. A LightGBM classifier, tuned with Optuna over 50 trials of 5-fold cross-validation, achieves a **ROC-AUC of 85.44%** and an accuracy of 79.95% on the held-out test set.
 
 ### LLM explainability layer
 
@@ -120,11 +120,12 @@ The backend runs as a Docker container on Hugging Face Spaces (free CPU tier, 16
 | Component | Metric | Score |
 |---|---|---|
 | Detection cascade (3-class) | Accuracy | 90.83% |
-| Detection cascade (3-class) | Macro F1 | 0.908 |
-| AI-Generated submodel | F1 / AUC | 0.939 / 0.997 |
-| Deepfake submodel | F1 / AUC | 0.931 / 0.953 |
-| Virality prediction | ROC-AUC | 0.854 |
+| Detection cascade (3-class) | Macro F1 | 90.79% |
+| AI-Generated submodel | F1 / AUC / Recall | 93.94% / 99.73% / 98.21% |
+| Deepfake submodel | F1 / AUC | 93.06% / 95.30% |
+| Virality prediction | ROC-AUC | 85.44% |
 | Virality prediction | Accuracy | 79.95% |
+| Virality prediction (viral class) | Precision / Recall / F1 | 72.2% / 65% / 69% |
 
 Full methodology, literature review, and comparison against prior published systems are documented in the research paper at `docs/finalreport.docx`.
 
